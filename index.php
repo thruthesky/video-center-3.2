@@ -17,8 +17,8 @@ $socket_server_url = 'http://localhost:9001/';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <link href="css/index.css" rel="stylesheet">
     <link href="etc/bootstrap-v4-alpha3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
 
 
     <script>
@@ -58,8 +58,20 @@ $socket_server_url = 'http://localhost:9001/';
     </ul>
 </nav>
 
+
 <section id="command">
     <button class="user-information btn btn-secondary" type="button">User Information</button>
+    <button type="button">Create a Room</button>
+</section>
+
+<form>
+    Set Username: <input name="username"><button class="set-username" type="button">Update</button>
+</form>
+
+
+
+<section class="user-list">
+
 </section>
 
 <nav class="navbar navbar-fixed-bottom navbar-light bg-faded">
