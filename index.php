@@ -41,7 +41,7 @@ $socket_server_url = 'http://localhost:9001/';
 
 
 <nav class="navbar navbar-light bg-faded">
-    <a class="navbar-brand" href="#">LOGO</a>
+    <a class="navbar-brand" href="#">Video Center</a>
     <ul class="nav navbar-nav">
         <li class="nav-item active">
             <a class="nav-link" href="#">Lobby <span class="sr-only">(current)</span></a>
