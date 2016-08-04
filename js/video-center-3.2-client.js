@@ -81,10 +81,10 @@ $(function(){
         socket.on('updaterooms', function (rooms,current_room) {
             $('#rooms').empty();
             $.each(rooms, function(key, value) {                  
-            $('#rooms').append('<div><p id="roomnames">' + value + '</p></div>');  
+            $('#rooms').append('<div><p class="fa fa-comments roomsnames" id="roomsnames">' + value + '</p></div>');  
             });
         });       
-         $('#rooms').on('click', '#roomnames', function(e) {    
+         $('#rooms').on('click', '#roomsnames', function(e) {    
            if($(this).html()=="Lobby"){
                alert("You cannot join Lobby");
            }

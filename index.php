@@ -20,7 +20,7 @@ $socket_server_url = 'http://localhost:9001/';
     <link href="etc/bootstrap-v4-alpha3/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <script>
         var socket_server_url = '<?php echo $socket_server_url?>';
     </script>
@@ -55,6 +55,7 @@ $socket_server_url = 'http://localhost:9001/';
                 </form>
             </div>
             <div class="col-md-6">
+
                 <div class="title">
                     Video Center Guidelines
                 </div>
@@ -110,10 +111,11 @@ $socket_server_url = 'http://localhost:9001/';
             <div class="row">
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
-                    <div class="panel panel-info">
-                        <div class="panel-heading" id="rooms">
-                            <p>Room Sample</p>
-                        </div>
+                    <!-- <div class="card card-outline-info text-xs-center " id="rooms">   -->
+                    <!-- List of room -->                     
+                    <!-- </div> -->
+                    <div class="rooms" id="rooms">  
+                    <!-- List of room -->                     
                     </div>
                 </div>
                 <div class="col-md-4"></div>
@@ -124,10 +126,10 @@ $socket_server_url = 'http://localhost:9001/';
             
             <div class="col-md-8">
                 <div class="panel panel-info fiftypercent">
-                    <div class="panel-body" ><h3 id="roomname">Room</h3></div>
+                    <div class="panel-body" ><h3 id="roomname" class="roomnamechat">Room</h3></div>
                 </div>
                 
-                <div class="messages" id="chat">You have entered a room</div>
+                <div class="messages mzstyle" id="chat">You have entered a room</div>
 
                 <form id="messageForm">
                     <div class="form-group">
