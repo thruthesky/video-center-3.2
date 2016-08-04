@@ -1,4 +1,4 @@
-/**
+ /**
  * Created by thruthesky on 2016-08-01.
  */
 
@@ -18,57 +18,127 @@ var db = Lockr;
 var connection = new RTCMultiConnection();
 connection.socketURL = socket_server_url;
 var socket = connection.getSocket(); // socket.
-var username = db.get('username', getRandomString());
+var username = db.get('username');
 /**
  *
  */
-$(function(){
-    var $body = $('body');
-    $body.on('click', '.user-information', on_user_information_click);
-    $body.on('click', '.set-username', on_set_username);
-
-    $('input[name="username"]').val( username );
-    setTimeout(function() {
-        socket.emit('set-username', username);
-        socket.emit( 'user-information', function(users) {
-            for( var i in users ) {
-                add_user( users[i] );
-                //$('.user-list').append('<div class="user" socket-id="'+i+'">' + users[i].username + '</div>');
-            }
+ //Entrance 
+$(function(){   
+    
+        var $entrance = $('#entrance');
+        $entrance.on('click', '#username-submit',on_username_submit);    
+});
+/*Lobby Area*/
+$(function(){   
+        var $lobby_menu = $('#lobby-menu');
+        var $menuFormUsername = $('#menuFormUsername');
+        var $menuFormRoom = $('#menuFormRoom');
+        $lobby_menu.on('click', '#btnUpdateUsername',function(){
+                $('.menu-room').hide();
+                $('.menu-username').show();
         });
-    }, 200);
-
+        $lobby_menu.on('click', '#btnCreateRoom',function(){
+                $('.menu-username').hide();
+                $('.menu-room').show();
+        });  
+        $lobby_menu.on('click', '#btnLogout',function(){
+            socket.emit('logout',function(confirm){
+                if(confirm){
+                    $('#menu-username').hide();
+                    $('#menu-room').hide();
+                    $('#lobbyArea').hide();
+                    $('#entrance').show();
+                }
+            });
+        }); 
+       $menuFormUsername.submit(function(e){
+            e.preventDefault();
+               socket.emit('update username', $('#updateUsername').val(), function(callback){
+                if(callback){
+                    $('#menu-username').hide(); 
+                }
+            });     
+        }); 
+       $menuFormRoom.submit(function(e){
+            e.preventDefault();
+            if($('#createRoom').val()==null||$('#createRoom').val()==""){
+                $('#createRoom').val("Room");
+            }
+            socket.emit('create room', $('#createRoom').val(), function(callback){
+                if(callback){
+                    $('#lobbyArea').hide();
+                    $('#messageArea').show(); 
+                }           
+                                   
+            });
+            $('#createRoom').val('');
+        });
+    
+        
+        socket.on('get username', function(data){
+                $('#updateUsername').val(data);
+        });  
+        socket.on('updaterooms', function (rooms,current_room) {
+            $('#rooms').empty();
+            $.each(rooms, function(key, value) {                  
+            $('#rooms').append('<div><p class="fa fa-comments roomsnames" id="roomsnames">' + value + '</p></div>');  
+            });
+        });       
+         $('#rooms').on('click', '#roomsnames', function(e) {    
+           if($(this).html()=="Lobby"){
+               alert("You cannot join Lobby");
+           }
+           else{            
+                 socket.emit('switchRoom', $(this).html(), function(data){
+                    $('#lobbyArea').hide();
+                    $('#messageArea').show(); 
+               });
+           }
+         });         
+          
 });
+ //Chat Room
+ $(function(){ 
+    var $chat = $('#chat');
+    $('#messageForm').submit(function(e){
+         e.preventDefault();
+         socket.emit('send message', $('#message').val());
+         $('#message').val('');
+     });
 
+     socket.on('new message', function(data){
+         $chat.append('<div class="mzstyle"><strong>'+data.user+': </strong>'+data.msg+'</div>');                
+         $chat.animate({scrollTop: $chat.prop('scrollHeight')});
+         
+     });
 
-function on_user_information_click(event) {
-    console.log("on_user_information_click");
-    var $this = $(this);
-    socket.emit( 'user-information', function( user ) {
-        console.log( user );b
-    } );
-}
-
-
-function on_set_username() {
-    var username = $(this).parent().find('input').val();
-    socket.emit('set-username', username, function( re ) {
-        console.log(re);
-        db.set('username', username);
+    socket.on('updateroomname', function(data){
+        $('#roomname').empty();
+        if(data==null||data==""){
+            data="Room";
+        }
+        $('#roomname').append('<h4>'+data+'</h4>');
     });
+});
+// Functions
+function on_username_submit(event) {
+    event.preventDefault();
+    var $username = $('#username');
+    if($username.val()==null||$username.val()==""){
+        db.rm('username');
+        $username.val(db.get('username', getRandomString()));
+        db.set('username', $username.val());
+    }else{
+        db.set('username', $username.val());
+    }
+      
+    socket.emit('new user', $username.val(), function(data){
+        if(data){               
+            $('#entrance').hide();    
+            $('#lobbyArea').show();            
+        }  
+    });   
+    $username.val('');
 }
 
 
-socket.on('set-username', function(re) {
-    console.log(re);
-    $('.user-list .user[socket-id="'+re.socket+'"]').text(re.username);
-});
-socket.on('remove-user', function(socket) {
-    console.log('remove: ' + socket);
-    $('.user-list .user[socket-id="'+socket+'"]').remove();
-});
-socket.on('add-user', add_user);
-function add_user(user) {
-    $('.user-list .user[socket-id="'+user.socket+'"]').remove();
-    $('.user-list').append('<div class="user" socket-id="'+user.socket+'">' + user.username + '</div>');
-}
