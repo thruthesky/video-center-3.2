@@ -1,0 +1,3 @@
+[submodule "RTCMultiConnection"]
+	path = RTCMultiConnection
+	url = https://github.com/thruthesky/RTCMultiConnection
