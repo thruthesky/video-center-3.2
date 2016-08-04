@@ -45,7 +45,7 @@ function on_user_information_click(event) {
     console.log("on_user_information_click");
     var $this = $(this);
     socket.emit( 'user-information', function( user ) {
-        console.log( user );
+        console.log( user );b
     } );
 }
 
