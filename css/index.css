@@ -5,4 +5,10 @@
   padding: 1rem;
   background-color: #dfdfdf; }
 
+body {
+  background-color: white; }
+  body .navbar .logo {
+    color: blue;
+    font-size: 9pt; }
+
 /*# sourceMappingURL=index.css.map */
