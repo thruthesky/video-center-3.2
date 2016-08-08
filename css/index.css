@@ -1,6 +1,15 @@
 .navbar .nav .nav-item .nav-link {
   color: black; }
 
+#entrance {
+  display: none; }
+
+#lobby {
+  display: none; }
+
+#room {
+  display: none; }
+
 .user-list {
   padding: 1rem;
   background-color: #dfdfdf; }
@@ -10,5 +19,8 @@ body {
   body .navbar .logo {
     color: blue;
     font-size: 9pt; }
+
+#lobbyArea, #messageArea {
+  display: none; }
 
 /*# sourceMappingURL=index.css.map */
