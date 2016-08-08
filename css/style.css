@@ -1,94 +1,92 @@
 /*Settings*/
-#lobbyArea,#messageArea{
-    display: none;
-}
-.menu-room{
-    display: none;
-}
-.menu-username{
-    display: none;
-}
-.fiftypercent{
-    width: 50%;
-}
-#roomnames:hover{ 
-    cursor: pointer; 
-}
-/*Layout*/
+#lobbyArea, #messageArea {
+  display: none; }
 
+.menu-room {
+  display: none; }
+
+.menu-username {
+  display: none; }
+
+.fiftypercent {
+  width: 50%; }
+
+#roomnames:hover {
+  cursor: pointer; }
+
+/*Layout*/
 .nav-header {
-	position: relative;
-    border-bottom: 2px solid #008ed0;    
-    background-color: #19b5fe;
-    color: white;
-    border-color: #19b5fe;
-}
+  position: relative;
+  border-bottom: 2px solid #008ed0;
+  background-color: #19b5fe;
+  color: white;
+  border-color: #19b5fe; }
+
 .nav-footer {
-    
-    border-bottom: 2px solid #008ed0;    
-    background-color: #19b5fe;
-    color: white;
-    border-color: #19b5fe;
-}
+  border-bottom: 2px solid #008ed0;
+  background-color: #19b5fe;
+  color: white;
+  border-color: #19b5fe; }
+
 .logo {
-    font-size: 40px;
-    line-height: normal;
-    padding-left: 20px;
-}
+  font-size: 40px;
+  line-height: normal;
+  padding-left: 20px; }
+
 .center {
-    text-align: center;
-}
+  text-align: center; }
+
 .roomsnames {
-    width: 100%;
-    margin: .1em;
-    padding: 1em;
-    color:#0399e0;
-    border:2px solid #0399e0;
-    border-radius: 3px;
-    cursor: pointer;
-}
-.roomnamechat
-{   
-    margin-top:20px; 
-    color:#0399e0;
-    border:2px solid #0399e0;
-    border-radius: 3px;
-}
+  width: 100%;
+  margin: .1em;
+  padding: 1em;
+  color: #0399e0;
+  border: 2px solid #0399e0;
+  border-radius: 3px;
+  cursor: pointer; }
+
+.roomnamechat {
+  margin-top: 20px;
+  color: #0399e0;
+  border: 2px solid #0399e0;
+  border-radius: 3px; }
+
 /*Entrance*/
 #entrance {
-    padding-top: 100px;
-}
+  padding-top: 100px; }
+
 #entrance [name="username"] {
-    padding-left: 20px;
-    margin-bottom: 20px;
-    width: 100%;
-    height: 50px;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
+  padding-left: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  height: 50px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
 #entrance input[type="submit"] {
-    width: 100%;
-    height: 50px;
-    border-color: #2ecc71;
-    font-size: 1.6rem;
-    background-color: #2ecc71;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
+  width: 100%;
+  height: 50px;
+  border-color: #2ecc71;
+  font-size: 1.6rem;
+  background-color: #2ecc71;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
 #entrance .title {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    text-align: center;
-}
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center; }
+
 /*Room*/
 .messages {
-    overflow: hidden;
-    overflow-y: scroll;
-    height: 100px;
-    background-color: #efefef;
-}
-.mzstyle{
-        padding-left: 10px;
-}
+  overflow: hidden;
+  overflow-y: scroll;
+  height: 100px;
+  background-color: #efefef; }
+
+.mzstyle {
+  padding-left: 10px; }
+
+/*# sourceMappingURL=style.css.map */

@@ -6,6 +6,7 @@
   background-color: #dfdfdf;
 }
 
+
 body {
   background-color: white;
   .navbar {
@@ -14,4 +15,8 @@ body {
       font-size: 9pt;
     }
   }
+}
+
+#lobbyArea,#messageArea{
+    display: none;
 }
