@@ -1,0 +1,51 @@
+<?php
+
+?>
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <script>
+        var socket_server_url = '<?php echo $socket_server_url?>';
+    </script>
+
+    <script src="js/jquery-3.1.0.min.js"></script>
+
+    <script src="http://localhost:9001/socket.io/socket.io.js"></script>
+    <script src="RTCMultiConnection/dist/rmc3.min.js"></script>
+
+</head>
+<body>
+
+
+<script>
+
+    var connection = new RTCMultiConnection();
+    connection.socketURL = "http://localhost:9001/";
+    var socket = connection.getSocket(); // socket.
+
+
+    socket.emit('update_username', 'TEST', function(username) {
+        console.log('update_username callback', username);
+        /*socket.emit('disconnect', function() {
+          console.log('disconnected');
+        });
+        */
+        /*socket.disconnect(function() {
+            console.log('disconnected...');
+        });
+        */
+
+        socket.emit('force-disconnect', function() {
+            console.log('force-disconnected...');
+        });
+
+    });
+
+</script>
+
+
+
+</body>
+</html>
