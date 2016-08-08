@@ -28,6 +28,26 @@ $(function(){
         var $entrance = $('#entrance');
         $entrance.on('click', '#username-submit',on_username_submit);    
 });
+// Functions
+function on_username_submit(event) {
+    event.preventDefault();
+    var $username = $('#username');
+    if($username.val()==null||$username.val()==""){
+        db.rm('username');
+        $username.val(db.get('username', getRandomString()));
+        db.set('username', $username.val());
+    }else{
+        db.set('username', $username.val());
+    }
+      
+    socket.emit('new user', $username.val(), function(data){
+        if(data){               
+            $('#entrance').hide();    
+            $('#lobbyArea').show();            
+        }  
+    });   
+    $username.val('');
+}
 /*Lobby Area*/
 $(function(){   
         var $lobby_menu = $('#lobby-menu');
@@ -120,25 +140,6 @@ $(function(){
         $('#roomname').append('<h4>'+data+'</h4>');
     });
 });
-// Functions
-function on_username_submit(event) {
-    event.preventDefault();
-    var $username = $('#username');
-    if($username.val()==null||$username.val()==""){
-        db.rm('username');
-        $username.val(db.get('username', getRandomString()));
-        db.set('username', $username.val());
-    }else{
-        db.set('username', $username.val());
-    }
-      
-    socket.emit('new user', $username.val(), function(data){
-        if(data){               
-            $('#entrance').hide();    
-            $('#lobbyArea').show();            
-        }  
-    });   
-    $username.val('');
-}
+
 
 
