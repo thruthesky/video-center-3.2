@@ -71,7 +71,8 @@ $(function(){
 
 
 function callback_message_from_server___update_username() {
-    //
+    //For updating the username in lobby
+    lobby().find('.username').text( username );
 }
 
 function createRoom(room) {
@@ -86,6 +87,12 @@ function joinRoom() {
         showRoom( room );
     });
 }
+function leaveRoom() {    
+    socket.emit('leave-room','Lobby', function(room) {       
+        /*$('.roomname').remove();*/        
+        backLobby();        
+    });
+}
 
 
 function initEventHandlers() {
@@ -93,7 +100,7 @@ function initEventHandlers() {
     lobby().find('.form.update-username form').submit(on_username_form_submit);
     lobby().find('.form.create-room form').submit(on_create_room_form_submit);
     lobby().find('.chat form').submit(on_chat_submit);
-    $('.room-leave').click( showLobby );
+    $('.room-leave').click( leaveRoom );
     $('body').on('click', '.roomname', joinRoom );
     function on_chat_submit(event) {
         event.preventDefault();
@@ -172,6 +179,7 @@ function on_username_form_submit(event) {
         'username' : $form.find('[name="username"]').val(),
         'callback' : function() {
             console.log('name updated');
+            
         }
     });
     $form.find('[name="username"]').val('');
@@ -199,6 +207,7 @@ function on_create_room_form_submit(event) {
     event.preventDefault();
     console.log('on_create_room_form_submit');
     socket.emit( 'create-room', $(this).find('[name="roomname"]').val(), createRoom);
+    $(this).find('[name="roomname"]').val('');
 }
 
 ///////////////////////////////////////////////////////////
@@ -223,12 +232,13 @@ socket.on('disconnect', function( socket ) {
 });
 socket.on('create-room', function( room ) {
     console.log( room );
+    lobby().addRoom( room );
+    /*to display the roomlist only once
     if ( lobby().isActive() ) {
         lobby().addRoom( room );
-    }
+    }*/          
 });
-socket.on('get message', function(data){
-    console.log(data.roomid);
+socket.on('get message', function(data){    
     if(data.roomid=='Lobby') {
         lobbyDisplay().append('<div><strong>'+data.user+': </strong>'+data.msg+'</div>');                
         lobbyDisplay().animate({scrollTop: lobbyDisplay().prop('scrollHeight')});
@@ -311,6 +321,19 @@ var showLobby = function(callback) {
     lobby()
         .getUserList()
         .getRoomList()
+        .show();
+    lobby()
+        .find('.username').text( username );
+    if ( typeof callback == 'function' ) callback();
+};
+var backLobby = function(callback) {
+    //I add this sir because when leaving the room it will duplicate the roomlist
+    entrance().hide();
+    room().hide();
+    var users = entrance().find('.user-list').html();
+
+    lobby()
+        .getUserList()
         .show();
     lobby()
         .find('.username').text( username );

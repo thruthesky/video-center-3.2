@@ -57,9 +57,6 @@ vc.listen = function(socket, io) {
 
         trace(oldUsername + " has changed his name to : " + username);
         callback(username);
-        /*vc.joinRoom(io, socket, 'lobby', function(){
-            console.log('you join the lobby');
-        });*/
         io.sockets.emit('update-username', socket.info );
 
     });
@@ -72,6 +69,9 @@ vc.listen = function(socket, io) {
         vc.createRoom(io, socket, roomname, callback);
     });
     socket.on('join-room', function(room_id, callback){
+        vc.joinRoom(io, socket, room_id, callback);
+    });
+    socket.on('leave-room', function(room_id, callback){
         vc.joinRoom(io, socket, room_id, callback);
     });
 
