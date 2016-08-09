@@ -228,10 +228,15 @@ socket.on('create-room', function( room ) {
     }
 });
 socket.on('get message', function(data){
-    console.log('I receive message');
-    display().append('<div><strong>'+data.user+': </strong>'+data.msg+'</div>');                
-    display().animate({scrollTop: display().prop('scrollHeight')});
-    
+    console.log(data.roomid);
+    if(data.roomid=='Lobby') {
+        lobbyDisplay().append('<div><strong>'+data.user+': </strong>'+data.msg+'</div>');                
+        lobbyDisplay().animate({scrollTop: lobbyDisplay().prop('scrollHeight')});
+    }
+    else {
+        display().append('<div><strong>'+data.user+': </strong>'+data.msg+'</div>');                
+        display().animate({scrollTop: display().prop('scrollHeight')});
+    }
 });
 
 function updateUserOnUserList(user) {
