@@ -81,12 +81,7 @@ vc.listen = function(socket, io) {
         callback(true);  
         vc.updateRoom(newroom,socket,io);          
     });
-    /*Chat Room*/
-    socket.on('send message', function(data){
-        // io.sockets.emit('new message', {msg:data,user:socket.username});
-        trace("Room "); trace(socket.room);
-        io.sockets["in"](socket.room).emit('new message', {msg:data,user:socket.username});
-    });
+    
 
     socket.on('user-list', function( callback ){
         trace("user-list message received from client.");
@@ -102,6 +97,11 @@ vc.listen = function(socket, io) {
     socket.on('room-list', function( callback ){
         trace("room-list message received from client.");
         callback( rooms );
+    });
+
+    socket.on('send message', function(message){
+        userinfo=vc.getUser(socket);                
+        io.sockets["in"](userinfo.room).emit('get message', {msg:message,user:userinfo.username});
     });
 
 

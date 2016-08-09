@@ -18,6 +18,14 @@ $socket_server_url = 'http://localhost:9001/';
     <link href="etc/bootstrap-v4-alpha3/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link href="css/index.css" rel="stylesheet">
+    <style>
+    .display {
+        overflow: hidden;
+        overflow-y: scroll;
+        height: 100px;
+        background-color: #efefef;        
+    }
+    </style>
     <script>
         var socket_server_url = '<?php echo $socket_server_url?>';
     </script>
@@ -93,7 +101,7 @@ $socket_server_url = 'http://localhost:9001/';
 
 
     <div class="chat">
-        <div class="display"></div>
+        <div class="display" id='lobbyDisplay'></div>
         <form>
             <input name="message">
         </form>
@@ -109,7 +117,7 @@ $socket_server_url = 'http://localhost:9001/';
 <div id="room">
     <h2 class="roomname">Room Name</h2>
     <div class="chat">
-        <div class="display"></div>
+        <div class="display" id="display"></div>
         <form>
             <input name="message">
         </form>

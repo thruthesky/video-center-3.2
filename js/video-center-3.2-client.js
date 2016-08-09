@@ -92,13 +92,17 @@ function initEventHandlers() {
     entrance().find('form').submit(on_username_form_submit);
     lobby().find('.form.update-username form').submit(on_username_form_submit);
     lobby().find('.form.create-room form').submit(on_create_room_form_submit);
+    lobby().find('.chat form').submit(on_chat_submit);
     $('.room-leave').click( showLobby );
     $('body').on('click', '.roomname', joinRoom );
     function on_chat_submit(event) {
         event.preventDefault();
-        console.log('on_chat_submit');
+         $message=$(this).find('[name="message"]');
+         // console.log($message.val());
+         socket.emit('send message', $message.val());
+         $message.val('');
     }
-
+    
     room().find('.chat form').submit(on_chat_submit);
 }
 
@@ -223,6 +227,12 @@ socket.on('create-room', function( room ) {
         lobby().addRoom( room );
     }
 });
+socket.on('get message', function(data){
+    console.log('I receive message');
+    display().append('<div><strong>'+data.user+': </strong>'+data.msg+'</div>');                
+    display().animate({scrollTop: display().prop('scrollHeight')});
+    
+});
 
 function updateUserOnUserList(user) {
     console.log('updateUserOnUserList', user);
@@ -259,6 +269,12 @@ var activePanel = function() {
 };
 var activeUserList = function() {
     return activePanel().find('.user-list');
+};
+var display = function() {
+    return $('#display');
+};
+var lobbyDisplay = function() {
+    return $('#lobbyDisplay');
 };
 
 
