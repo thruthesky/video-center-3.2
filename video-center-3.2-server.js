@@ -58,6 +58,7 @@ vc.listen = function(socket, io) {
         trace(oldUsername + " has changed his name to : " + username);
         callback(username);
         io.sockets.emit('update-username', socket.info );
+
     });
 
 
@@ -70,6 +71,9 @@ vc.listen = function(socket, io) {
     socket.on('join-room', function(room_id, callback){
         vc.joinRoom(io, socket, room_id, callback);
     });
+    socket.on('leave-room', function(room_id, callback){
+        vc.joinRoom(io, socket, room_id, callback);
+    });
 
     //Logout
     socket.on('logout', function(callback){
@@ -77,16 +81,11 @@ vc.listen = function(socket, io) {
         vc.removeUser( socket.id );
         callback(true);             
     });
-    socket.on('switchRoom', function(newroom, callback){
+    /*socket.on('switchRoom', function(newroom, callback){
         callback(true);  
         vc.updateRoom(newroom,socket,io);          
-    });
-    /*Chat Room*/
-    socket.on('send message', function(data){
-        // io.sockets.emit('new message', {msg:data,user:socket.username});
-        trace("Room "); trace(socket.room);
-        io.sockets["in"](socket.room).emit('new message', {msg:data,user:socket.username});
-    });
+    });*/
+    
 
     socket.on('user-list', function( callback ){
         trace("user-list message received from client.");
@@ -102,6 +101,11 @@ vc.listen = function(socket, io) {
     socket.on('room-list', function( callback ){
         trace("room-list message received from client.");
         callback( rooms );
+    });
+
+    socket.on('send message', function(message){
+        userinfo=vc.getUser(socket);                
+        io.sockets["in"](userinfo.room).emit('get message', {msg:message,user:userinfo.username,roomid:userinfo.room});
     });
 
 
@@ -124,7 +128,9 @@ vc.addUser = function (socket, username) {
     info.socket = socket.id;
     info.room = 'Lobby';
     socket.info = info;
+    socket.join('Lobby');
     vc.user[ socket.id ] = socket;
+    
 };
 
 vc.getUser = function (socket) {
