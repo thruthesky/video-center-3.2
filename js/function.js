@@ -11,3 +11,19 @@ function getRandomString() {
         return (Math.random() * new Date().getTime()).toString(36).replace(/\./g, '');
     }
 }
+function save_username( username ) {
+    if ( username == "" ) {
+        alert('username is empty');
+    }
+    else {
+        db.set(const_username, username);
+    }
+    return username;
+}
+
+function delete_username( ) {
+    db.set(const_username, '');
+}
+function get_username() {
+    return db.get( const_username );
+}
