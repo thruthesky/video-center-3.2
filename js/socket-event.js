@@ -44,15 +44,28 @@ function server_create_room(roomname, callback) {
     });
 }
 
+function server_leave_room(callback) {
+     socket.emit('leave-room','Lobby', function(room) {
+        /*$('.roomname').remove();*/
+        i_left_room();
+    });
+}
+
 /**
  * Sends a message to server that the user want to update his name.
  * @attention don't be confused with 'all_client_username()'
  * @param o
  */
-function server_update_username(o) {
-    console.log('server_update_username');
+function server_update_username(o) {    
+    console.log('server_update_username');   
     socket.emit('update-username', o.username, o.callback);
 }
+
+function server_send_message(message) {
+    console.log(message);
+    socket.emit('send message', message);
+}
+
 //
 // Socket Event Emitting 'from Client to Server'
 //

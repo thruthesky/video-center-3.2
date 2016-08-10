@@ -31,6 +31,9 @@
         if ( $user.length ) $user.remove();
         $userList.append( markup.userName(user) );
     };
+    $.fn.emptyRoomList = function () {
+        return $('#room-list').empty();        
+    };
 }(jQuery));
 
 
@@ -64,7 +67,9 @@ var enterRoom = showRoom = function(o) {
 };
 
 var showEntrance = function() {
-    lobby().hide();
+    lobby()        
+        .hide()
+        .emptyRoomList();//Added to avoid duplication of roomlist
     room().hide();
     entrance()
         .show()
@@ -99,10 +104,17 @@ var i_entered_lobby = showLobby = function(callback) {
     if ( typeof callback == 'function' ) callback();
 };
 
+var i_return_session = function(username) {
+    server_update_username({
+                'username' : username,
+                'callback' : function(username) {
+                    console.log('name updated');
+                    if ( entrance().isActive() ) enterLobby();
+                }
+    });
+}
 
-
-var leaveRoom = function(callback) {
-    //I add this sir because when leaving the room it will duplicate the roomlist
+var i_left_room = function(callback) {
     entrance().hide();
     room().hide();
 
@@ -115,7 +127,12 @@ var leaveRoom = function(callback) {
 };
 
 var i_got_message = function( data ) {
-    if(data.roomid=='Lobby') {
+    
+    var msg=data.message; 
+    var usrname = data.username; 
+    var room = data.room_id;
+    console.log("Message: "+msg+" Name: "+usrname+" Room: "+room);
+    if(data.room_id=='Lobby') {
         lobbyDisplay().append( markup.chatMessage( data ) );
         lobbyDisplay().animate({scrollTop: lobbyDisplay().prop('scrollHeight')});
     }
