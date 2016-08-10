@@ -105,12 +105,14 @@ var i_entered_lobby = showLobby = function(callback) {
 };
 
 var i_return_session = function(username) {
+    //To fix the find undefined
+    lobby().show();
     server_update_username({
-                'username' : username,
-                'callback' : function(username) {
-                    console.log('name updated');
-                    if ( entrance().isActive() ) enterLobby();
-                }
+        'username' : username,
+        'callback' : function(username) {
+            console.log('name updated');
+            if ( entrance().isActive() ) enterLobby();
+        }
     });
 }
 
