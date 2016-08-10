@@ -34,8 +34,13 @@ vc.listen = function(socket, io) {
 
     
     /*----------New Implementation-----------*/
-    //New Connection
+    // New Connection
     trace(socket.id + ' has been Connected');
+    vc.addUser(socket); //
+
+
+
+
     //disconnection
     socket.on('disconnect', function(){
         forceDisconnect(io, socket);
@@ -45,23 +50,32 @@ vc.listen = function(socket, io) {
     });
     //New User
     socket.on('update-username', function(username, callback){
-        var oldUsername;
-        if ( typeof socket.info == 'undefined' ) {
-            oldUsername = socket.id;
-            vc.addUser(socket, username);
+        try {
+            var oldUsername;
+            if ( typeof socket.info == 'undefined' ) {
+                oldUsername = socket.id;
+                vc.updateUsername( socket, username );
+            }
+            else {
+                oldUsername = socket.info.username;
+                socket.info.username = username;
+            }
+            trace(oldUsername + " has changed his name to : " + username);
+            callback(username);
+            io.sockets.emit('update-username', socket.info );
         }
-        else {
-            oldUsername = socket.info.username;
-            socket.info.username = username;
+        catch ( e ) {
+            socket.emit('error', 'socket.on("update-username")');
         }
-
-        trace(oldUsername + " has changed his name to : " + username);
-        callback(username);
-        io.sockets.emit('update-username', socket.info );
-
     });
 
 
+
+    // join lobby
+    socket.on('join-lobby', function(callback) {
+        socket.join('Lobby');
+        callback();
+    });
 
 
     //Create Room
@@ -104,8 +118,13 @@ vc.listen = function(socket, io) {
     });
 
     socket.on('send message', function(message){
-        userinfo=vc.getUser(socket);                
-        io.sockets["in"](userinfo.room).emit('get message', {msg:message,user:userinfo.username,roomid:userinfo.room});
+        try {
+            var user = vc.getUser(socket);
+            io.sockets["in"]( user.room ).emit('get message', { message: message, username: user.username, room_id: user.room } );
+        }
+        catch ( e ) {
+            socket.emit('error', 'socket.on("send message")');
+        }
     });
 
 
@@ -123,19 +142,34 @@ vc.listen = function(socket, io) {
  */
 vc.addUser = function (socket, username) {
     var info = {};
-    info.username = username;
+    info.username = username || 'Anonymous';
     info.connectedOn = Math.floor( new Date() / 1000 );
-    info.socket = socket.id;
-    info.room = 'Lobby';
+    info.socket_id = socket.id;
+    info.room_id = 'Lobby';
     socket.info = info;
-    socket.join('Lobby');
+    // socket.join('Lobby');
     vc.user[ socket.id ] = socket;
-    
 };
 
+
+/**
+ *
+ * @param socket
+ * @returns {*}
+ */
 vc.getUser = function (socket) {
-    return vc.user[ socket.id ].info;
+    try {
+        if ( typeof socket == 'undefined' ) socket.emit('error', 'vc.getUser: socket is undefined');
+        if ( typeof socket.id == 'undefined' ) socket.emit('error', 'vc.getUser: socket.id is undefined');
+        if ( typeof vc.user[ socket.id ] == 'undefined' ) socket.emit('error', 'vc.getUser: vc.user[socket.id] is undefined');
+        if ( typeof vc.user[ socket.id ].info == 'undefined' ) socket.emit('error', 'vc.getUser: vc.user[socket.id].info is undefined');
+        return vc.user[ socket.id ].info;
+    }
+    catch ( e ) {
+        socket.emit('error', 'getUser()');
+    }
 };
+
 
 vc.updateUsername = function( socket, username ) {
     vc.user[ socket.id ].info.username = username;
@@ -162,14 +196,14 @@ vc.removeUser = function (id) {
 
 };
 vc.createRoom = function (io, socket, roomname, callback) {
-    socket.leave(socket.info.room);
-    trace( socket.info.username + ' left :' + socket.info.room);
+    socket.leave(socket.info.room_id);
+    trace( socket.info.username + ' left :' + socket.info.room_id);
 
-    var room_id = socket.id;
+    var room_id = socket.id; // @attention room_id is room creator's socket.id
 
 
     socket.join( room_id );
-    socket.info.room = room_id;
+    socket.info.room_id = room_id;
 
 
     /// Saving room info
@@ -184,9 +218,9 @@ vc.createRoom = function (io, socket, roomname, callback) {
 vc.joinRoom = function( io, socket, room_id, callback ) {
 
 
-    socket.leave( socket.info.room );
+    socket.leave( socket.info.room_id );
     socket.join( room_id );
-    socket.info.room = room_id;
+    socket.info.room_id = room_id;
     if ( typeof rooms[room_id].name == 'undefined' ) {
         trace( socket.info.username + ' joined : undefined room');
     }

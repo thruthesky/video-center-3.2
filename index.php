@@ -48,7 +48,20 @@ $socket_server_url = 'http://localhost:9001/';
     <script src="js/function.js"></script>
     <script src="js/lockr.js"></script>
     <script src="RTCMultiConnection/dist/rmc3.min.js"></script>
+
+
+
+    <script src="js/init.js"></script>
+    <script src="js/dom-navigator.js"></script>
+    <script src="js/dom-event-handler.js"></script>
+    <script src="js/markup.js"></script>
+    <script src="js/lobby.js"></script>
+    <script src="js/action.js"></script>
+    <script src="js/element.js"></script>
     <script src="js/video-center-3.2-client.js"></script>
+    <script src="js/socket-event.js"></script>
+    <script src="js/callback.js"></script>
+
 </head>
 <body>
 

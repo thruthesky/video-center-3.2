@@ -5,6 +5,10 @@ Video Center inherits the idea and the structure of Video Center 3 and it adds l
 
 # TODO
 
+* delete user from server and update to all if a users logs out or close the borwser.
+* delete room if the last user leaves from the room.
+
+
 * Update room names pumping.
 
     * before it pulls out room information every 4 seconds.
