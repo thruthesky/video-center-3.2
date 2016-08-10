@@ -5,7 +5,7 @@
  *
  */
 var vc = {};
-var rooms = { 'Lobby': {id: 'lobby', name: 'Lobby'} };
+var rooms = { 'Lobby': {room_id: 'Lobby', name: 'Lobby'} };
 exports = module.exports = vc;
 /**
  *
@@ -36,7 +36,7 @@ vc.listen = function(socket, io) {
     /*----------New Implementation-----------*/
     // New Connection
     trace(socket.id + ' has been Connected');
-    vc.addUser(socket); //
+    /*vc.addUser(socket);*/ //
 
 
 
@@ -54,7 +54,7 @@ vc.listen = function(socket, io) {
             var oldUsername;
             if ( typeof socket.info == 'undefined' ) {
                 oldUsername = socket.id;
-                vc.updateUsername( socket, username );
+                vc.addUser( socket, username );                
             }
             else {
                 oldUsername = socket.info.username;
@@ -65,7 +65,7 @@ vc.listen = function(socket, io) {
             io.sockets.emit('update-username', socket.info );
         }
         catch ( e ) {
-            socket.emit('error', 'socket.on("update-username")');
+            socket.emit('error', 'socket.on("update-username")'+e);
         }
     });
 
@@ -120,7 +120,7 @@ vc.listen = function(socket, io) {
     socket.on('send message', function(message){
         try {
             var user = vc.getUser(socket);
-            io.sockets["in"]( user.room ).emit('get message', { message: message, username: user.username, room_id: user.room } );
+            io.sockets["in"]( user.room ).emit('get message', { message: message, username: user.username, room_id: user.room_id } );
         }
         catch ( e ) {
             socket.emit('error', 'socket.on("send message")');
@@ -207,7 +207,7 @@ vc.createRoom = function (io, socket, roomname, callback) {
 
 
     /// Saving room info
-    rooms[ room_id ] = { id: room_id, name: roomname };
+    rooms[ room_id ] = { room_id: room_id, name: roomname };
 
     trace( socket.info.username + ' created and joined :' + rooms[ room_id ].name);
 
