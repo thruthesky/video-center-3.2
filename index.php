@@ -74,7 +74,7 @@ $socket_server_url = 'http://localhost:9001/';
 
 
 <div id="entrance">
-    <form>
+    <form id="usernameform">
         <input name="username" placeholder="Input Username"/>
         <input type="submit" value="Update Name" />
     </form>

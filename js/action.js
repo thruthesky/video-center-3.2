@@ -27,9 +27,19 @@
         var $userList;
         if ( this.hasClass('user-list') ) $userList = this;
         else $userList = this.find('.user-list');
-        var $user = $userList.find('[socket="'+user.socket+'"]');
+        var $user = $userList.find('[socket="'+user.socket_id+'"]');
         if ( $user.length ) $user.remove();
         $userList.append( markup.userName(user) );
+    };
+    $.fn.emptyRoomList = function () {
+        return $('#room-list').empty();        
+    };
+    //emptying the chat room message
+    $.fn.emptyRoomMessage = function () {
+        return $('#display').empty();        
+    };
+    $.fn.emptyLobbyMessage = function () {
+        return $('#lobbyDisplay').empty();        
     };
 }(jQuery));
 
@@ -40,8 +50,11 @@
  * @todo user must be logged out from the server and update to all client.
  */
 var doLogout = function() {
-    delete_username();
-    showEntrance();
+    display().emptyLobbyMessage();
+    server_logout(showEntrance());//for the server
+    delete_username();//for lockr
+    /*showEntrance();*/
+
     /*
      showLobby( function() {
      console.log('after show lobby');
@@ -57,14 +70,20 @@ var doLogout = function() {
  *      - o.name - room name is mandatory.
  */
 var enterRoom = showRoom = function(o) {
+    console.log("Roomname: "+o.room_id);
+    roomname=o.room_id;
+    save_roomname(roomname)
     entrance().hide();
     lobby().hide();
     room().show();
     room().find('.roomname').text(o.name);
+    //every time you join a room change the roomname 
 };
 
 var showEntrance = function() {
-    lobby().hide();
+    lobby()        
+        .hide()
+        .emptyRoomList();//Added to avoid duplication of roomlist
     room().hide();
     entrance()
         .show()
@@ -83,6 +102,8 @@ var showEntrance = function() {
  * @param callback
  */
 var enterLobby = function(callback) {
+    roomname='Lobby';
+    save_roomname(roomname);
     server_enter_lobby( i_entered_lobby );
 };
 
@@ -99,10 +120,23 @@ var i_entered_lobby = showLobby = function(callback) {
     if ( typeof callback == 'function' ) callback();
 };
 
+var i_return_session = function(username) {
+    //To fix the find undefined
+    lobby().show();
+    server_update_username({
+        'username' : username,
+        'callback' : function(username) {
+            console.log('name updated');
+            if ( entrance().isActive() ) enterLobby();
+        }
+    });
+}
 
-
-var leaveRoom = function(callback) {
-    //I add this sir because when leaving the room it will duplicate the roomlist
+var i_left_room = function(callback) {
+    roomname='Lobby';
+    save_roomname(roomname);
+    console.log('Roomname: '+roomname);
+    display().emptyRoomMessage();
     entrance().hide();
     room().hide();
 
@@ -115,11 +149,17 @@ var leaveRoom = function(callback) {
 };
 
 var i_got_message = function( data ) {
-    if(data.roomid=='Lobby') {
+    
+    var msg=data.message; 
+    var usrname = data.username; 
+    var room = data.room_id;
+    console.log("Message: "+msg+" Name: "+usrname+" Room: "+room);
+    console.log("Roomname: "+roomname);
+    if(roomname=="Lobby"&&data.room_id==roomname) {
         lobbyDisplay().append( markup.chatMessage( data ) );
         lobbyDisplay().animate({scrollTop: lobbyDisplay().prop('scrollHeight')});
     }
-    else {
+    else if (data.room_id==roomname){
         display().append( markup.chatMessage( data ) );
         display().animate({scrollTop: display().prop('scrollHeight')});
     }
@@ -159,7 +199,7 @@ var all_client_remove_user = function(socket) {
 
 function updateUserOnUserList(user) {
     console.log('updateUserOnUserList', user);
-    var $user = activeUserList().find('[socket="'+user.socket+'"]');
+    var $user = activeUserList().find('[socket="'+user.socket_id+'"]');
     if ( $user.length ) $user.text(user.username);
     else activeUserList().appendUser( user );
 }
