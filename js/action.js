@@ -20,8 +20,8 @@
     $.fn.isActive = function () {
         return this.css('display') != 'none';
     };
-    $.fn.addRoom = function (user) {
-        $('#room-list').append( markup.roomName(user) );
+    $.fn.addRoom = function ( roomname ) {
+        $('#room-list').append( markup.roomName( roomname ) );
     };
     $.fn.appendUser = function(user) {
         var $userList;
@@ -181,9 +181,10 @@ function i_got_user_list(users, $this) {
 function i_got_room_list(rooms, $this) {
     for( var i in rooms ) {
         if ( ! rooms.hasOwnProperty(i) ) continue;
-        var user = rooms[i];
-        if ( typeof user == 'undefined' || user == '' || user == 'null' || user == null || ! user ) continue;
-        $this.addRoom( user ); // markup.roomName( user );
+        var roomname = rooms[i];
+        if ( _.isEmpty( roomname ) ) continue;
+        $this.addRoom( roomname );
+        // markup.roomName( user );
     }
 }
 
@@ -197,9 +198,9 @@ var all_client_remove_user = function(socket) {
 
 
 
-function updateUserOnUserList(user) {
-    console.log('updateUserOnUserList', user);
-    var $user = activeUserList().find('[socket="'+user.socket_id+'"]');
+function update_user_on_user_list(user) {
+    console.log('update_user_on_user_list', user);
+    var $user = activeUserList().find('[socket="'+user.socket.id+'"]');
     if ( $user.length ) $user.text(user.username);
     else activeUserList().appendUser( user );
 }
@@ -224,7 +225,7 @@ function all_client_add_room(room) {
 
 function all_client_update_username(user) {
     //For updating the username in lobby
-    updateUserOnUserList(user);
+    update_user_on_user_list(user);
     lobby().find('.username').text( username );
 }
 

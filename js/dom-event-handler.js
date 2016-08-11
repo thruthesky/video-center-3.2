@@ -66,7 +66,7 @@ function on_click_join_room() {
         alert('You cannot join Lobby.')
     }
     else {
-    server_join_room( room_id, showRoom );
+        server_join_room( room_id, showRoom );
     }
 }
 
