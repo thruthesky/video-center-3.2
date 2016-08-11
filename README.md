@@ -5,9 +5,22 @@ Video Center inherits the idea and the structure of Video Center 3 and it adds l
 
 # TODO
 
-* delete user from server and update to all if a users logs out or close the borwser.
+* show users list under room name in lobby. and update it real time.
+
+* refactor variables
+
+    user.name
+    user.room.name
+    user.socket.io
+    
+
+* @done delete user from server and update to all if a users logs out or close the browser.
+    * @done update user list on lobbby.
+    
 * delete room if the last user leaves from the room.
 
+* When one leave a room, inform all room member that he left.
+* When one close web browser or shutdown computer, inform all room member that he left. 
 
 * Update room names pumping.
 
@@ -58,15 +71,38 @@ Video Center inherits the idea and the structure of Video Center 3 and it adds l
         
 
 
+# Coding Guide
+
+Only active panel will be updated in real time.
+
+So, user list in lobby and user list in room have different user list.
+
+When active panel changes, the panel must have latest information.
+
+so, every panel when it becomes active must load latest information from server.
+
+
 
 
 
 # INSTALLATION
 
-## RUN server.js
+## DEVELOP MODE - RUN locally.
 
-* chat server (  Signaling server ) from rmc.
+* run a Web server
+    * set the server to use PHP
 
-* 
+* run 'node server.js'
+
+## DEVELOP MODE - Run node server remotely.
+
+Once you want to test the 'server.js' on real server, you can install it on real server.
+
+ 
+* run a web server locally.
+
+* run 'node server.js' in remote server.
+
+
 
 
