@@ -50,7 +50,9 @@ function server_leave_room(callback) {
         i_left_room();
     });
 }
-
+function server_logout() {
+    socket.emit('log-out');
+}
 /**
  * Sends a message to server that the user want to update his name.
  * @attention don't be confused with 'all_client_username()'
@@ -93,6 +95,9 @@ socket.on('update-username', function( user ) {
  * A user disconnected.
  */
 socket.on('disconnect', function( socket ) {
+    all_client_remove_user(socket);
+});
+socket.on('log-out', function( socket ) {
     all_client_remove_user(socket);
 });
 /**

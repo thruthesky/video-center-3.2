@@ -27,7 +27,7 @@
         var $userList;
         if ( this.hasClass('user-list') ) $userList = this;
         else $userList = this.find('.user-list');
-        var $user = $userList.find('[socket="'+user.socket+'"]');
+        var $user = $userList.find('[socket="'+user.socket_id+'"]');
         if ( $user.length ) $user.remove();
         $userList.append( markup.userName(user) );
     };
@@ -43,6 +43,7 @@
  * @todo user must be logged out from the server and update to all client.
  */
 var doLogout = function() {
+    server_logout();
     delete_username();
     showEntrance();
     /*
@@ -178,7 +179,7 @@ var all_client_remove_user = function(socket) {
 
 function updateUserOnUserList(user) {
     console.log('updateUserOnUserList', user);
-    var $user = activeUserList().find('[socket="'+user.socket+'"]');
+    var $user = activeUserList().find('[socket="'+user.socket_id+'"]');
     if ( $user.length ) $user.text(user.username);
     else activeUserList().appendUser( user );
 }

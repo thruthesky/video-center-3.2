@@ -88,13 +88,17 @@ vc.listen = function(socket, io) {
     socket.on('leave-room', function(room_id, callback){
         vc.joinRoom(io, socket, room_id, callback);
     });
-
+    socket.on('log-out', function(){
+        forceLogout(io, socket/*, function(){
+            socket.emit('log-out',socket)
+        }*/);            
+    });
     //Logout
-    socket.on('logout', function(callback){
+    /*socket.on('logout', function(callback){
         trace(socket.username + " leave the Lobby");
         vc.removeUser( socket.id );
         callback(true);             
-    });
+    });*/
     /*socket.on('switchRoom', function(newroom, callback){
         callback(true);  
         vc.updateRoom(newroom,socket,io);          
@@ -238,6 +242,23 @@ var forceDisconnect = function( io, socket, callback ) {
     socket.disconnect();
     if ( typeof callback == 'function' ) callback();
     io.sockets.emit('disconnect', socket.id);
+    if ( typeof socket.info == 'undefined' ) {
+        trace('Notice: socket.info is undefined. The user who has no name may refreshed the page.');
+    }
+    else {
+        var info = socket.info;
+        if ( typeof info.username == 'undefined' ) {
+            trace('Error: info.username is undefined on disconnected');
+        }
+        else {
+            trace(info.username + ' has disconnected');
+        }
+    }
+};
+var forceLogout = function( io, socket ) {
+    vc.removeUser( socket.id );
+    socket.leave(socket.room);
+    io.sockets.emit('log-out', socket.id);
     if ( typeof socket.info == 'undefined' ) {
         trace('Notice: socket.info is undefined. The user who has no name may refreshed the page.');
     }
