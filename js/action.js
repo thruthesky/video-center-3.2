@@ -34,6 +34,10 @@
     $.fn.emptyRoomList = function () {
         return $('#room-list').empty();        
     };
+    //emptying the chat room message
+    $.fn.emptyRoomMessage = function () {
+        return $('#display').empty();        
+    };
 }(jQuery));
 
 
@@ -61,10 +65,14 @@ var doLogout = function() {
  *      - o.name - room name is mandatory.
  */
 var enterRoom = showRoom = function(o) {
+    console.log("Roomname: "+o.room_id);
+    roomname=o.room_id;
+    save_roomname(roomname)
     entrance().hide();
     lobby().hide();
     room().show();
     room().find('.roomname').text(o.name);
+    //every time you join a room change the roomname 
 };
 
 var showEntrance = function() {
@@ -89,6 +97,8 @@ var showEntrance = function() {
  * @param callback
  */
 var enterLobby = function(callback) {
+    roomname='Lobby';
+    save_roomname(roomname);
     server_enter_lobby( i_entered_lobby );
 };
 
@@ -118,6 +128,10 @@ var i_return_session = function(username) {
 }
 
 var i_left_room = function(callback) {
+    roomname='Lobby';
+    save_roomname(roomname);
+    console.log('Roomname: '+roomname);
+    display().emptyRoomMessage();
     entrance().hide();
     room().hide();
 
@@ -135,11 +149,12 @@ var i_got_message = function( data ) {
     var usrname = data.username; 
     var room = data.room_id;
     console.log("Message: "+msg+" Name: "+usrname+" Room: "+room);
-    if(data.room_id=='Lobby') {
+    console.log("Roomname: "+roomname);
+    if(roomname=="Lobby"&&data.room_id==roomname) {
         lobbyDisplay().append( markup.chatMessage( data ) );
         lobbyDisplay().animate({scrollTop: lobbyDisplay().prop('scrollHeight')});
     }
-    else {
+    else if (data.room_id==roomname){
         display().append( markup.chatMessage( data ) );
         display().animate({scrollTop: display().prop('scrollHeight')});
     }

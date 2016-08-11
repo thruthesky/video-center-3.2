@@ -27,3 +27,20 @@ function delete_username( ) {
 function get_username() {
     return db.get( const_username );
 }
+
+function save_roomname( roomname ) {
+    if ( roomname == "" ) {
+        alert('roomname is empty');
+    }
+    else {
+        db.set(const_roomname, roomname);
+    }
+    return roomname;
+}
+
+function delete_roomname( ) {
+    db.set(const_roomname, '');
+}
+function get_roomname() {
+    return db.get( const_roomname );
+}

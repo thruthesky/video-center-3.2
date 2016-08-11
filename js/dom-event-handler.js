@@ -35,6 +35,7 @@ function on_form_submit_username(event) {
         'callback' : function(username) {
             console.log('name updated');
             if ( entrance().isActive() ) enterLobby();
+
         }
     });
     $form.find('[name="username"]').val('');
@@ -42,9 +43,9 @@ function on_form_submit_username(event) {
 
 function on_form_submit_create_room(event) {
     event.preventDefault();
-    roomname = $(this).find('[name="roomname"]').val();
+    roomnameform = $(this).find('[name="roomname"]').val();    
     console.log('on_form_submit_create_room');
-    server_create_room(roomname, enterRoom);
+    server_create_room(roomnameform, enterRoom);
     $(this).find('[name="roomname"]').val('');
 }
 
@@ -71,7 +72,7 @@ function on_click_join_room() {
 
 
 
-function on_click_leave_room() {
+function on_click_leave_room() {    
     server_leave_room( i_left_room );   
 }
 
