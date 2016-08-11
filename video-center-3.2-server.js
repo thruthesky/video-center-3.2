@@ -5,7 +5,7 @@
  *
  */
 var vc = {};
-var rooms = { 'Lobby': {id: 'lobby', name: 'Lobby'} };
+var rooms = { 'Lobby': {room_id: 'Lobby', name: 'Lobby'} };
 exports = module.exports = vc;
 /**
  *
@@ -36,7 +36,7 @@ vc.listen = function(socket, io) {
     /*----------New Implementation-----------*/
     // New Connection
     trace(socket.id + ' has been Connected');
-    vc.addUser(socket); //
+    /*vc.addUser(socket);*/ //
 
 
 
@@ -54,7 +54,7 @@ vc.listen = function(socket, io) {
             var oldUsername;
             if ( typeof socket.info == 'undefined' ) {
                 oldUsername = socket.id;
-                vc.updateUsername( socket, username );
+                vc.addUser( socket, username );                
             }
             else {
                 oldUsername = socket.info.username;
@@ -65,7 +65,7 @@ vc.listen = function(socket, io) {
             io.sockets.emit('update-username', socket.info );
         }
         catch ( e ) {
-            socket.emit('error', 'socket.on("update-username")');
+            socket.emit('error', 'socket.on("update-username")'+e);
         }
     });
 
@@ -88,13 +88,15 @@ vc.listen = function(socket, io) {
     socket.on('leave-room', function(room_id, callback){
         vc.joinRoom(io, socket, room_id, callback);
     });
-
+    socket.on('log-out', function(callback){
+        forceLogout(io, socket, callback);            
+    });
     //Logout
-    socket.on('logout', function(callback){
+    /*socket.on('logout', function(callback){
         trace(socket.username + " leave the Lobby");
         vc.removeUser( socket.id );
         callback(true);             
-    });
+    });*/
     /*socket.on('switchRoom', function(newroom, callback){
         callback(true);  
         vc.updateRoom(newroom,socket,io);          
@@ -120,7 +122,7 @@ vc.listen = function(socket, io) {
     socket.on('send message', function(message){
         try {
             var user = vc.getUser(socket);
-            io.sockets["in"]( user.room ).emit('get message', { message: message, username: user.username, room_id: user.room } );
+            io.sockets["in"]( user.room ).emit('get message', { message: message, username: user.username, room_id: user.room_id } );
         }
         catch ( e ) {
             socket.emit('error', 'socket.on("send message")');
@@ -195,6 +197,12 @@ vc.removeUser = function (id) {
     delete vc.user[ id ];
 
 };
+vc.logoutUser = function (id) {
+
+    // var s = vc.user[ id ]; // socket
+    delete vc.user[ id ].info.username;
+
+};
 vc.createRoom = function (io, socket, roomname, callback) {
     socket.leave(socket.info.room_id);
     trace( socket.info.username + ' left :' + socket.info.room_id);
@@ -207,7 +215,7 @@ vc.createRoom = function (io, socket, roomname, callback) {
 
 
     /// Saving room info
-    rooms[ room_id ] = { id: room_id, name: roomname };
+    rooms[ room_id ] = { room_id: room_id, name: roomname };
 
     trace( socket.info.username + ' created and joined :' + rooms[ room_id ].name);
 
@@ -238,6 +246,22 @@ var forceDisconnect = function( io, socket, callback ) {
     socket.disconnect();
     if ( typeof callback == 'function' ) callback();
     io.sockets.emit('disconnect', socket.id);
+    if ( typeof socket.info == 'undefined' ) {
+        trace('Notice: socket.info is undefined. The user who has no name may refreshed the page.');
+    }
+    else {
+        var info = socket.info;
+        if ( typeof info.username == 'undefined' ) {
+            trace('Error: info.username is undefined on disconnected');
+        }
+        else {
+            trace(info.username + ' has disconnected');
+        }
+    }
+};
+var forceLogout = function( io, socket ) {    
+    socket.leave(socket.room);
+    io.sockets.emit('log-out', socket.id);
     if ( typeof socket.info == 'undefined' ) {
         trace('Notice: socket.info is undefined. The user who has no name may refreshed the page.');
     }
