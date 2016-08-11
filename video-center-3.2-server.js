@@ -88,10 +88,8 @@ vc.listen = function(socket, io) {
     socket.on('leave-room', function(room_id, callback){
         vc.joinRoom(io, socket, room_id, callback);
     });
-    socket.on('log-out', function(){
-        forceLogout(io, socket/*, function(){
-            socket.emit('log-out',socket)
-        }*/);            
+    socket.on('log-out', function(callback){
+        forceLogout(io, socket, callback);            
     });
     //Logout
     /*socket.on('logout', function(callback){
@@ -199,6 +197,12 @@ vc.removeUser = function (id) {
     delete vc.user[ id ];
 
 };
+vc.logoutUser = function (id) {
+
+    // var s = vc.user[ id ]; // socket
+    delete vc.user[ id ].info.username;
+
+};
 vc.createRoom = function (io, socket, roomname, callback) {
     socket.leave(socket.info.room_id);
     trace( socket.info.username + ' left :' + socket.info.room_id);
@@ -255,8 +259,7 @@ var forceDisconnect = function( io, socket, callback ) {
         }
     }
 };
-var forceLogout = function( io, socket ) {
-    vc.removeUser( socket.id );
+var forceLogout = function( io, socket ) {    
     socket.leave(socket.room);
     io.sockets.emit('log-out', socket.id);
     if ( typeof socket.info == 'undefined' ) {

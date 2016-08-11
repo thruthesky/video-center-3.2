@@ -38,6 +38,9 @@
     $.fn.emptyRoomMessage = function () {
         return $('#display').empty();        
     };
+    $.fn.emptyLobbyMessage = function () {
+        return $('#lobbyDisplay').empty();        
+    };
 }(jQuery));
 
 
@@ -47,9 +50,11 @@
  * @todo user must be logged out from the server and update to all client.
  */
 var doLogout = function() {
-    server_logout();
-    delete_username();
-    showEntrance();
+    display().emptyLobbyMessage();
+    server_logout(showEntrance());//for the server
+    delete_username();//for lockr
+    /*showEntrance();*/
+
     /*
      showLobby( function() {
      console.log('after show lobby');
