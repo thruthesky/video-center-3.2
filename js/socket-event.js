@@ -50,18 +50,20 @@ function server_leave_room(callback) {
         i_left_room();
     });
 }
-function server_logout(callback) {
-    socket.emit('log-out',callback);
-}
+
 /**
  * Sends a message to server that the user want to update his name.
  * @attention don't be confused with 'all_client_username()'
  * @param o
  */
-function server_update_username(o) {    
-    console.log('server_update_username '+o.username);   
-    socket.emit('update-username', o.username, o.callback);
-}
+var server_login = server_update_username = function (username, callback) {
+    console.log('server_update_username '+ username);
+    socket.emit('update-username',username, callback);
+};
+//
+
+
+
 
 function server_send_message(message) {
     console.log(message);

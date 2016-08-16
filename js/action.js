@@ -111,26 +111,28 @@ var showEntrance = function() {
  */
 var enterLobby = function(callback) {
     console.log('Fresh enter');
-    roomname='Lobby';
-    save_roomname(roomname);
+    roomname = 'Lobby';
+    save_roomname( roomname );
     server_enter_lobby( i_entered_lobby );
 };
 
 var i_entered_lobby = showLobby = function(callback) {
     console.log('I enter with username:'+username);
+
     entrance().hide();
     room().hide();
-    formUserName().hide();
-    formRoomName().hide();  
+    formUserName().hide(); // hide it and show it when the user clicks.
+    formRoomName().hide(); // hide it and show it when the user clicks.
+    lobby().show();
     lobby()
         .getUserList()
         .getRoomList()
-        .show();
-    lobby()
         .find('.username').text( username );
     if ( typeof callback == 'function' ) callback();
 };
 
+
+/*
 var i_return_session = function(username) {
     //To fix the find undefined
     lobby().show();
@@ -141,7 +143,9 @@ var i_return_session = function(username) {
             if ( entrance().isActive() ) enterLobby();
         }
     });
-}
+};
+*/
+
 
 var i_left_room = function(callback) {
     roomname='Lobby';
@@ -193,9 +197,9 @@ function i_got_user_list(users, $this) {
 function i_got_room_list(rooms, $this) {
     for( var i in rooms ) {
         if ( ! rooms.hasOwnProperty(i) ) continue;
-        var user = rooms[i];
-        if ( typeof user == 'undefined' || user == '' || user == 'null' || user == null || ! user ) continue;
-        $this.addRoom( user ); // markup.roomName( user );
+        var roomname = rooms[i];
+        if ( _.isEmpty(roomname) ) continue;
+        $this.addRoom( roomname );
     }
 }
 
@@ -209,12 +213,17 @@ var all_client_remove_user = function(socket) {
 
 
 
-function updateUserOnUserList(user) {
-    console.log('updateUserOnUserList', user);
-    var $user = activeUserList().find('[socket="'+user.socket.id+'"]');
-    if ( $user.length ) $user.text(user.username);
-    else activeUserList().appendUser( user );
+// function updateUserOnUserList(user) {
+function update_user_on_user_list( user ) {
+    console.log('update_user_on_user_list', user);
+    if ( activeUserList().length ) {
+        var $user = activeUserList().find('[socket="'+user.socket+'"]');
+        if ( $user.length ) $user.text(user.username);
+        else activeUserList().appendUser( user );
+    }
+
 }
+
 
 
 
@@ -236,7 +245,7 @@ function all_client_add_room(room) {
 
 function all_client_update_username(user) {
     //For updating the username in lobby
-    updateUserOnUserList(user);
+    update_user_on_user_list(user);
     lobby().find('.username').text( username );
 }
 

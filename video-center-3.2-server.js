@@ -38,25 +38,26 @@ var trace = function( msg ) {
 vc.listen = function(socket, _io) {
 
     vc.io = _io;
-    vc.socket = socket;
 
     
     /*----------New Implementation-----------*/
     // New Connection
     trace( socket.id + ' has been Connected' );
 
-    vc.addUser();
+    vc.addUser( socket );
 
 
 
 
     //disconnection
     socket.on('disconnect', function(){
-        forceDisconnect();
+        forceDisconnect( socket );
     });
+    /**
     socket.on('force-disconnect', function(callback) {
         forceDisconnect(callback);
     });
+     */
     //New User
     /**
      *
@@ -64,12 +65,11 @@ vc.listen = function(socket, _io) {
      */
     socket.on('update-username', function(username, callback) {
         try {
-            var socket = vc.socket;
-            var user = vc.user[ socket.id ];
+            var user = me( socket ); // vc.user[ socket.id ];
             var oldUsername;
             if ( typeof user == 'undefined' ) {
                 oldUsername = socket.id;
-                vc.addUser( username );
+                vc.addUser( socket, username );
             }
             else {
                 oldUsername = user.username;
@@ -95,16 +95,17 @@ vc.listen = function(socket, _io) {
 
     //Create Room
     socket.on('create-room', function(roomname, callback){
-        vc.createRoom(roomname, callback);
+        vc.createRoom(socket, roomname, callback);
     });
     socket.on('join-room', function(roomname, callback){
-        vc.joinRoom(roomname, callback);
+        vc.joinRoom(socket, roomname, callback);
     });
     socket.on('leave-room', function(roomname, callback){
-        vc.joinRoom(roomname, callback);
+        vc.joinRoom(socket, roomname, callback);
     });
+
     socket.on('log-out', function(callback){
-        forceLogout(callback);
+        forceLogout( socket, callback );
     });
     //Logout
     /*socket.on('logout', function(callback){
@@ -123,7 +124,7 @@ vc.listen = function(socket, _io) {
         var users = {};
         for( var i in vc.user ) {
             if ( ! vc.user.hasOwnProperty(i) ) continue;
-            users[i] = vc.user[i].info;
+            users[i] = vc.user[i];
         }
         // socket.emit('user_information', users);
         callback( users );
@@ -136,7 +137,7 @@ vc.listen = function(socket, _io) {
 
     socket.on('send message', function(message){
         try {
-            var user = me();
+            var user = me( socket );
             console.log('Server Room:'+user.roomname);
             vc.io.sockets["in"]( user.roomname ).emit('get message', { message: message, username: user.username, roomname: user.roomname } );
         }
@@ -153,40 +154,34 @@ vc.listen = function(socket, _io) {
  * Add an incoming socket to vc.chat
  *
  *
+ * @param socket
  * @param username
  */
-vc.addUser = function (username) {
-    var socket = { id: vc.socket.id };
+vc.addUser = function (socket, username) {
     var user = {};
-    user.username = username || 'Anonymous';
+    user.username = username || 'Anonymous'; // user.name
     user.connectedOn = Math.floor( new Date() / 1000 );
-    user.socket = socket;
-    user.roomname = 'Lobby';
+    user.socket = socket.id;
+    user.roomname = 'Lobby'; // user.room.name, user.room.id, user.room.password, user.room.owner..
     // socket.info = info;
     // socket.join('Lobby');
     vc.user[ socket.id ] = user;
 };
 
 
+
+
 /**
+ *
  *
  * Returns user information from a socket.
  *
- *
- * @returns {*}
- */
-vc.getUser = function () {
-   return me();
-};
-
-/**
  *
  * @todo error handling
  *
  * @type {me}
  */
-var my = me = function() {
-    var socket = vc.socket;
+var my = me = function(socket) {
     try {
         if ( typeof socket == 'undefined' ) socket.emit('error', 'vc.getUser: socket is undefined');
         if ( typeof socket.id == 'undefined' ) socket.emit('error', 'vc.getUser: socket.id is undefined');
@@ -199,10 +194,11 @@ var my = me = function() {
 
 
 
-vc.updateUsername = function( username ) {
-    var socket = vc.socket;
+/*
+vc.updateUsername = function( socket, username ) {
     vc.user[ socket.id ].username = username;
 };
+*/
 
 /**
  *
@@ -227,12 +223,13 @@ vc.removeUser = function (id) {
 vc.logoutUser = function (id) {
 
     // var s = vc.user[ id ]; // socket
-    delete vc.user[ id ].info.username;
+    //delete vc.user[ id ].info.username;
+    // delete vc.user[ id ];
+    vc.removeUser( id );
 
 };
-vc.createRoom = function ( roomname, callback ) {
-    var socket = vc.socket;
-    var user = me();
+vc.createRoom = function ( socket, roomname, callback ) {
+    var user = me( socket );
     socket.leave(user.roomname);
     trace( user.username + ' left :' + user.roomname);
 
@@ -245,9 +242,8 @@ vc.createRoom = function ( roomname, callback ) {
     vc.io.sockets.emit('create-room', user );
 };
 
-vc.joinRoom = function( roomname, callback ) {
-    var socket = vc.socket;
-    var user = me();
+vc.joinRoom = function( socket, roomname, callback ) {
+    var user = me( socket );
     socket.leave( user.roomname );
     socket.join( roomname );
     user.roomname = roomname;
@@ -258,42 +254,28 @@ vc.joinRoom = function( roomname, callback ) {
 
 
 
-var forceDisconnect = function( callback ) {
-    var socket = vc.socket;
+var forceDisconnect = function( socket, callback ) {
+    var user = me( socket );
+    socket.leave( user.roomname );
     vc.removeUser( socket.id );
-    socket.leave(socket.room);
-    socket.disconnect();
+
+    //socket.leave(socket.room);
+    // socket.disconnect();
+
+
     if ( typeof callback == 'function' ) callback();
     vc.io.sockets.emit('disconnect', socket.id);
-    if ( typeof socket.info == 'undefined' ) {
-        trace('Notice: socket.info is undefined. The user who has no name may refreshed the page.');
-    }
-    else {
-        var info = socket.info;
-        if ( typeof info.username == 'undefined' ) {
-            trace('Error: info.username is undefined on disconnected');
-        }
-        else {
-            trace(info.username + ' has disconnected');
-        }
-    }
 };
-var forceLogout = function() {
-    var socket = vc.socket;
-    socket.leave(socket.room);
+
+var forceLogout = function( socket, callback ) {
+
+    var user = me( socket );
+
+    socket.leave( user.roomname );
     vc.io.sockets.emit('log-out', socket.id);
-    if ( typeof socket.info == 'undefined' ) {
-        trace('Notice: socket.info is undefined. The user who has no name may refreshed the page.');
-    }
-    else {
-        var info = socket.info;
-        if ( typeof info.username == 'undefined' ) {
-            trace('Error: info.username is undefined on disconnected');
-        }
-        else {
-            trace(info.username + ' has disconnected');
-        }
-    }
+
+    console.log( user.username + ' has logged out');
+    if ( typeof callback == 'function' ) callback( user );
 };
 
 //noinspection JSUndefinedPropertyAssignment
@@ -313,7 +295,6 @@ vc.getRoomList = function ( o ) {
     var roomList = [];
     for ( var roomname in rooms ) {
         if ( ! rooms.hasOwnProperty( roomname ) ) continue;
-        /// ??? if ( roomname.indexOf('/#') != -1 ) continue; // for socket.io 1.x.x ???
         if ( roomname == '' ) continue;
         roomname = roomname.replace( /^\//, '' );
         roomList.push( roomname );

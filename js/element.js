@@ -21,3 +21,4 @@
         return this.css('display') != 'none';
     };
 }(jQuery));
+

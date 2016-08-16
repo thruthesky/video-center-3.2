@@ -12,15 +12,25 @@ $(function(){
     if ( username ) {
         /*Added need to fix*/
         console.log("Username:"+username);  
-        console.log("Roomname:"+roomname);        
-        i_return_session(username);    
-        /*Added*/
-        if ( roomname && roomname!='Lobby') {
-            showRoom({username: username, name: roomname});
-        }
-        else {
-            enterLobby();
-        }
+        console.log("Roomname:"+roomname);
+
+        //i_return_session(username);
+
+        // async
+        server_login( username, function() {
+
+            // @todo remember room name and enter.
+            if ( roomname && roomname!='Lobby') {
+                showRoom({username: username, name: roomname});
+            }
+            else {
+                enterLobby();
+            }
+
+        } );
+
+
+
     }
     else {
         showEntrance();
