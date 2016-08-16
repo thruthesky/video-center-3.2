@@ -157,10 +157,10 @@ vc.listen = function(socket, _io) {
 vc.addUser = function (username) {
     var socket = { id: vc.socket.id };
     var user = {};
-    user.username = username || 'Anonymous';
+    user.username = username || 'Anonymous'; // user.name
     user.connectedOn = Math.floor( new Date() / 1000 );
     user.socket = socket;
-    user.roomname = 'Lobby';
+    user.roomname = 'Lobby'; // user.room.name, user.room.id, user.room.password, user.room.owner..
     // socket.info = info;
     // socket.join('Lobby');
     vc.user[ socket.id ] = user;
