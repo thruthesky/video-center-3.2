@@ -20,8 +20,8 @@
     $.fn.isActive = function () {
         return this.css('display') != 'none';
     };
-    $.fn.addRoom = function ( roomname ) {
-        $('#room-list').append( markup.roomName( roomname ) );
+    $.fn.addRoom = function (user) {
+        $('#room-list').append( markup.roomName(user) );
     };
     $.fn.appendUser = function(user) {
         var $userList;
@@ -44,16 +44,24 @@
 }(jQuery));
 
 
+var showFormUserName = function() {
+    formRoomName().hide();
+    formUserName().show();
+};
 
+var showFormRoomName = function() {
+    formUserName().hide();
+    formRoomName().show();    
+};
 
 /**
  * @todo user must be logged out from the server and update to all client.
  */
 var doLogout = function() {
     display().emptyLobbyMessage();
-    server_logout(showEntrance());//for the server
+    server_logout();//for the server
     delete_username();//for lockr
-    /*showEntrance();*/
+    showEntrance();
 
     /*
      showLobby( function() {
@@ -70,13 +78,13 @@ var doLogout = function() {
  *      - o.name - room name is mandatory.
  */
 var enterRoom = showRoom = function(o) {
-    console.log("Roomname: "+o.room_id);
-    roomname=o.room_id;
+    console.log("Enter Roomname: "+o.roomname);
+    roomname=o.roomname;
     save_roomname(roomname)
     entrance().hide();
     lobby().hide();
     room().show();
-    room().find('.roomname').text(o.name);
+    room().find('.roomname').text(o.roomname);
     //every time you join a room change the roomname 
 };
 
@@ -102,15 +110,18 @@ var showEntrance = function() {
  * @param callback
  */
 var enterLobby = function(callback) {
+    console.log('Fresh enter');
     roomname='Lobby';
     save_roomname(roomname);
     server_enter_lobby( i_entered_lobby );
 };
 
 var i_entered_lobby = showLobby = function(callback) {
+    console.log('I enter with username:'+username);
     entrance().hide();
     room().hide();
-
+    formUserName().hide();
+    formRoomName().hide();  
     lobby()
         .getUserList()
         .getRoomList()
@@ -152,14 +163,14 @@ var i_got_message = function( data ) {
     
     var msg=data.message; 
     var usrname = data.username; 
-    var room = data.room_id;
-    console.log("Message: "+msg+" Name: "+usrname+" Room: "+room);
+    var room = data.roomname;
+    console.log("Message: "+msg+" Name: "+usrname+" Room: "+ data.roomname);
     console.log("Roomname: "+roomname);
-    if(roomname=="Lobby"&&data.room_id==roomname) {
+    if(roomname=="Lobby"&&data.roomname==roomname) {
         lobbyDisplay().append( markup.chatMessage( data ) );
         lobbyDisplay().animate({scrollTop: lobbyDisplay().prop('scrollHeight')});
     }
-    else if (data.room_id==roomname){
+    else if (data.roomname==roomname){
         display().append( markup.chatMessage( data ) );
         display().animate({scrollTop: display().prop('scrollHeight')});
     }
@@ -170,6 +181,7 @@ var i_got_message = function( data ) {
 
 function i_got_user_list(users, $this) {
     for( var i in users ) {
+        console.log('My user'+users[i]);
         if ( ! users.hasOwnProperty(i) ) continue;
         var user = users[i];
         $this.appendUser( user );
@@ -181,10 +193,9 @@ function i_got_user_list(users, $this) {
 function i_got_room_list(rooms, $this) {
     for( var i in rooms ) {
         if ( ! rooms.hasOwnProperty(i) ) continue;
-        var roomname = rooms[i];
-        if ( _.isEmpty( roomname ) ) continue;
-        $this.addRoom( roomname );
-        // markup.roomName( user );
+        var user = rooms[i];
+        if ( typeof user == 'undefined' || user == '' || user == 'null' || user == null || ! user ) continue;
+        $this.addRoom( user ); // markup.roomName( user );
     }
 }
 
@@ -198,8 +209,8 @@ var all_client_remove_user = function(socket) {
 
 
 
-function update_user_on_user_list(user) {
-    console.log('update_user_on_user_list', user);
+function updateUserOnUserList(user) {
+    console.log('updateUserOnUserList', user);
     var $user = activeUserList().find('[socket="'+user.socket.id+'"]');
     if ( $user.length ) $user.text(user.username);
     else activeUserList().appendUser( user );
@@ -225,7 +236,7 @@ function all_client_add_room(room) {
 
 function all_client_update_username(user) {
     //For updating the username in lobby
-    update_user_on_user_list(user);
+    updateUserOnUserList(user);
     lobby().find('.username').text( username );
 }
 
@@ -235,4 +246,3 @@ function all_client_update_username(user) {
  showRoom(room);
  };
  */
-

@@ -10,6 +10,8 @@ function register_event_handler() {
     lobby().find('.form.update-username form').submit(on_form_submit_username);
     lobby().find('.form.create-room form').submit(on_form_submit_create_room);
     lobby().find('.chat form').submit(on_form_submit_chat);
+    lobby().updateusername().click(showFormUserName);
+    lobby().createroom().click(showFormRoomName);
     lobby().logout().click(doLogout);
     $('.room-leave').click( on_click_leave_room );
     $('body').on('click', '.roomname', on_click_join_room );
@@ -39,6 +41,7 @@ function on_form_submit_username(event) {
         }
     });
     $form.find('[name="username"]').val('');
+    formUserName().hide();
 }
 
 function on_form_submit_create_room(event) {
@@ -47,6 +50,7 @@ function on_form_submit_create_room(event) {
     console.log('on_form_submit_create_room');
     server_create_room(roomnameform, enterRoom);
     $(this).find('[name="roomname"]').val('');
+    formRoomName().hide();
 }
 
 
@@ -75,6 +79,5 @@ function on_click_join_room() {
 function on_click_leave_room() {    
     server_leave_room( i_left_room );   
 }
-
 
 
