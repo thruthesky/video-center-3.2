@@ -1,7 +1,7 @@
 
 var markup = {};
 markup.userName = function( user ) {	
-    return '<div socket="'+user.socket_id+'">' + user.username + '</div>';
+    return '<div socket="'+user.socket.id+'">' + user.username + '</div>';
 };
 markup.roomName = function( roomname ) {
     return '' +
