@@ -48,12 +48,14 @@ var room = function() {
 
 var activePanel = function() {
     if ( entrance().css('display') != 'none' ) return entrance();
-    if ( lobby().css('display') != 'none' ) return lobby();
-    if ( room().css('display') != 'none' ) return room();
+    else if ( lobby().css('display') != 'none' ) return lobby();
+    else if ( room().css('display') != 'none' ) return room();
+    else  return false;
 };
 
 
 var activeUserList = function() {
-    return activePanel().find('.user-list');
+    if ( activePanel() ) return activePanel().find('.user-list');
+    return {};
 };
 

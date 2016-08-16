@@ -32,13 +32,9 @@ function on_form_submit_username(event) {
     event.preventDefault();
     var $form = $(this);
     username = save_username( $form.find('[name="username"]').val() );
-    server_update_username({
-        'username' : username,
-        'callback' : function(username) {
+    server_update_username( username, function(username) {
             console.log('name updated');
             if ( entrance().isActive() ) enterLobby();
-
-        }
     });
     $form.find('[name="username"]').val('');
     formUserName().hide();
