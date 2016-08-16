@@ -137,6 +137,7 @@ vc.listen = function(socket, _io) {
     socket.on('send message', function(message){
         try {
             var user = me();
+            console.log('Server Room:'+user.roomname);
             vc.io.sockets["in"]( user.roomname ).emit('get message', { message: message, username: user.username, roomname: user.roomname } );
         }
         catch ( e ) {
@@ -200,7 +201,7 @@ var my = me = function() {
 
 vc.updateUsername = function( username ) {
     var socket = vc.socket;
-    vc.user[ socket.id ].info.username = username;
+    vc.user[ socket.id ].username = username;
 };
 
 /**
@@ -251,7 +252,7 @@ vc.joinRoom = function( roomname, callback ) {
     socket.join( roomname );
     user.roomname = roomname;
     trace( user.username + ' joined :' + roomname);
-    if ( typeof callback == 'function' ) callback( roomname );
+    if ( typeof callback == 'function' ) callback( user );
     vc.io.sockets.emit('join-room', {user: user } );
 };
 

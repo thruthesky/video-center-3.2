@@ -93,7 +93,7 @@ $socket_server_url = 'http://localhost:9001/';
     </div>
     <div class="user-list"></div>
 
-    <div class="form update-username">
+    <div id="lobby_form_username" class="form update-username">
         <form>
             <h4>Update Username</h4>
             <input name="username" placeholder="Input user name" />
@@ -101,7 +101,7 @@ $socket_server_url = 'http://localhost:9001/';
         </form>
     </div>
 
-    <div class="form create-room">
+    <div id="lobby_form_roomname" class="form create-room">
         <form>
             <h4>Create Room</h4>
             <input name="roomname" placeholder="Input room name to join" />
@@ -114,6 +114,7 @@ $socket_server_url = 'http://localhost:9001/';
 
 
     <div class="chat">
+        <h4>Chat</h4>
         <div class="display" id='lobbyDisplay'></div>
         <form>
             <input name="message">
