@@ -59,7 +59,7 @@ function server_logout(callback) {
  * @param o
  */
 function server_update_username(o) {    
-    console.log('server_update_username');   
+    console.log('server_update_username '+o.username);   
     socket.emit('update-username', o.username, o.callback);
 }
 

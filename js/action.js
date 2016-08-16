@@ -102,12 +102,14 @@ var showEntrance = function() {
  * @param callback
  */
 var enterLobby = function(callback) {
+    console.log('Fresh enter');
     roomname='Lobby';
     save_roomname(roomname);
     server_enter_lobby( i_entered_lobby );
 };
 
 var i_entered_lobby = showLobby = function(callback) {
+    console.log('I enter with username:'+username);
     entrance().hide();
     room().hide();
 
