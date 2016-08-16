@@ -44,7 +44,15 @@
 }(jQuery));
 
 
+var showFormUserName = function() {
+    formRoomName().hide();
+    formUserName().show();
+};
 
+var showFormRoomName = function() {
+    formUserName().hide();
+    formRoomName().show();    
+};
 
 /**
  * @todo user must be logged out from the server and update to all client.
@@ -112,7 +120,8 @@ var i_entered_lobby = showLobby = function(callback) {
     console.log('I enter with username:'+username);
     entrance().hide();
     room().hide();
-
+    formUserName().hide();
+    formRoomName().hide();  
     lobby()
         .getUserList()
         .getRoomList()
@@ -237,4 +246,3 @@ function all_client_update_username(user) {
  showRoom(room);
  };
  */
-
