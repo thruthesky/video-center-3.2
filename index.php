@@ -16,7 +16,6 @@ $socket_server_url = 'http://localhost:9001/';
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <link href="etc/bootstrap-v4-alpha3/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link href="css/index.css" rel="stylesheet">
     <style>
     .display {
@@ -78,7 +77,7 @@ $socket_server_url = 'http://localhost:9001/';
         <input name="username" placeholder="Input Username"/>
         <input type="submit" value="Update Name" />
     </form>
-    <div class="user-list"></div>
+<!--    <div class="user-list"></div> -->
 </div>
 
 
@@ -91,7 +90,7 @@ $socket_server_url = 'http://localhost:9001/';
         <button class="create-room">Create Room</button>
         <button class="logout">Logout</button>
     </div>
-    <div class="user-list"></div>
+    <div class="user-list" id="user-list"></div>
 
     <div id="lobby_form_username" class="form update-username">
         <form>
@@ -114,7 +113,7 @@ $socket_server_url = 'http://localhost:9001/';
 
 
     <div class="chat">
-        <h4>Chat</h4>
+        <h4>Lobby</h4>
         <div class="display" id='lobbyDisplay'></div>
         <form>
             <input name="message">
@@ -123,7 +122,7 @@ $socket_server_url = 'http://localhost:9001/';
 
 
     <h4>Room List</h4>
-    <div id="room-list"></div>
+    <div class="room-list" id="room-list"></div>
 
 </div>
 

@@ -62,6 +62,10 @@ var server_login = server_update_username = function (username, callback) {
 };
 //
 
+var server_logout = function () {    
+    socket.emit('log-out');
+};
+
 
 
 
@@ -100,26 +104,34 @@ socket.on('disconnect', function( socket ) {
     all_client_remove_user(socket);
 });
 socket.on('log-out', function( socket ) {
-    console.log(socket);
+    console.log('I log out:'+socket);
     all_client_remove_user(socket);
+});
+/* 
+* New implementation for updating the roomlist
+*/
+socket.on('create-room', function( room ) {
+    roomid = room.roomname;
+    console.log( 'Room Name:'+roomid );
+    all_client_update_roomlist( room );
 });
 /**
  * A user created a room ( his room )
  * All user must add room in his lobby.
  */
-socket.on('create-room', function( room ) {
-    console.log( room );
-    all_client_add_room(room);
-    //lobby().addRoom( room ); // add room on lobby no matter where you are.
+// socket.on('create-room', function( room ) {
+//     console.log( room );
+//     all_client_add_room(room);
+//     //lobby().addRoom( room ); // add room on lobby no matter where you are.
 
-    /**
-     * to display the roomlist only once
-     *
-     if ( lobby().isActive() ) { // Add new room only if the user is in lobby.
-     lobby().addRoom( room );
-     }
-     */
-});
+//     /**
+//      * to display the roomlist only once
+//      *
+//      if ( lobby().isActive() ) { // Add new room only if the user is in lobby.
+//      lobby().addRoom( room );
+//      }
+//      */
+// });
 
 /**
  * You got a message.
