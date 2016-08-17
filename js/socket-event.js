@@ -31,8 +31,11 @@ function server_user_list(callback, $this) {
     });
     return $this;
 }
-
-
+//Check if room exist
+function server_check_room(roomname, callback) {
+    console.log('server_check_room');
+    socket.emit('check-room',roomname, callback);
+}
 function server_join_room(room_id, callback) {
     socket.emit('join-room',room_id, callback);
 }
@@ -92,8 +95,7 @@ function server_send_message(message) {
  *      That is why we got 'update-username' message from server.
  * All user must update new name of the user.
  */
-socket.on('update-username', function( user ) {
-    console.log('socket.on : update-username : ', user);
+socket.on('update-username', function( user ) {   
     lobby().find('.username').text( username );
     all_client_update_username(user);
 });

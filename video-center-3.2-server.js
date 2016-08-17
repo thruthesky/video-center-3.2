@@ -89,11 +89,21 @@ vc.listen = function(socket, _io) {
 
     // join lobby
     socket.on('join-lobby', function(callback) {
+        var user = me( socket );
+        user.roomname = "Lobby";
         socket.join('Lobby');
         callback();
     });
-
-
+    //Check if room still exist in the server
+    socket.on('check-room', function(roomname, callback){
+        var re = vc.getRoomList ( {room: roomname} );     
+            var result;
+            for(var i in re){
+                result=re[i];    
+                console.log(result);
+                callback( result );    
+            }              
+    });
     //Create Room
     socket.on('create-room', function(roomname, callback){
         vc.createRoom(socket, roomname, callback);
@@ -237,6 +247,7 @@ vc.logoutUser = function (id) {
 
 };
 
+
 vc.createRoom = function ( socket, roomname, callback ) {
     var user = me( socket );
     socket.leave(user.roomname);
@@ -280,6 +291,10 @@ var forceDisconnect = function( socket, callback ) {
     var user = me( socket );
     if ( user.roomname ) {
         socket.leave( user.roomname );
+        if(user.roomname!="Lobby"){
+        user.oldroom = user.roomname;
+        vc.leftRoom(socket);
+        }
     }
     vc.removeUser( socket.id );
 
