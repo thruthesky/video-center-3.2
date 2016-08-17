@@ -70,13 +70,14 @@ vc.listen = function(socket, _io) {
             if ( typeof user == 'undefined' ) {
                 oldUsername = socket.id;
                 vc.addUser( socket, username );
+                user = me( socket );
             }
             else {
                 oldUsername = user.username;
                 user.username = username;
             }
             trace(oldUsername + " has changed his name to : " + username);
-            callback(username);
+            callback( user );
             vc.io.sockets.emit('update-username', user );
         }
         catch ( e ) {
@@ -102,7 +103,7 @@ vc.listen = function(socket, _io) {
        
     });
     socket.on('leave-room', function(roomname, callback){
-        vc.joinRoom(socket, roomname, callback);
+        vc.joinRoom(socket, roomname, callback); // error. 'leave-room' must do only 'leave room', not join room.
         vc.leftRoom(socket);
     });
 
@@ -213,15 +214,20 @@ vc.updateUsernames = function(socket){
  */
 
 
-
-
-
+/**
+ *
+ * @param id - socket.id
+ */
 vc.removeUser = function (id) {
 
     // var s = vc.user[ id ]; // socket
     delete vc.user[ id ];
 
 };
+/**
+ *
+ * @param id - socket id.
+ */
 vc.logoutUser = function (id) {
 
     // var s = vc.user[ id ]; // socket
@@ -230,6 +236,7 @@ vc.logoutUser = function (id) {
     vc.removeUser( id );
 
 };
+
 vc.createRoom = function ( socket, roomname, callback ) {
     var user = me( socket );
     socket.leave(user.roomname);
@@ -244,9 +251,10 @@ vc.createRoom = function ( socket, roomname, callback ) {
     vc.io.sockets.emit('create-room', user );
 };
 
+
 vc.joinRoom = function( socket, roomname, callback ) {
     var user = me( socket );
-    user.oldroom = user.roomname;
+    user.oldroom = user.roomname; // fix. no need to have user.oldroom.
     socket.leave( user.oldroom );
     socket.join( roomname );
     user.roomname = roomname;
@@ -254,6 +262,7 @@ vc.joinRoom = function( socket, roomname, callback ) {
     if ( typeof callback == 'function' ) callback( user );
     vc.io.sockets.emit('join-room', {user: user } );
 };
+
 vc.leftRoom = function(socket) {
     var user = me( socket );   
     var roomname = user.oldroom;
@@ -263,12 +272,15 @@ vc.leftRoom = function(socket) {
     if(roomExist==1){
         vc.io.sockets.emit('remove-room', roomname );
     }
-}
+};
+
 
 
 var forceDisconnect = function( socket, callback ) {
     var user = me( socket );
-    socket.leave( user.roomname );
+    if ( user.roomname ) {
+        socket.leave( user.roomname );
+    }
     vc.removeUser( socket.id );
 
     //socket.leave(socket.room);
@@ -286,6 +298,7 @@ var forceLogout = function( socket, callback ) {
     socket.leave( user.roomname );
     vc.io.sockets.emit('log-out', socket.id);
 
+    vc.removeUser( socket.id );
     console.log( user.username + ' has logged out');
     if ( typeof callback == 'function' ) callback( user );
 };

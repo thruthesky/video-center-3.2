@@ -62,8 +62,8 @@ var server_login = server_update_username = function (username, callback) {
 };
 //
 
-var server_logout = function () {    
-    socket.emit('log-out');
+var server_logout = function ( callback ) {
+    socket.emit('log-out', callback);
 };
 
 
@@ -88,12 +88,13 @@ function server_send_message(message) {
 ///////////////////////////////////////////////////////////
 
 /**
- * A user updated his name.
+ * A user updated his own name.
  *      That is why we got 'update-username' message from server.
  * All user must update new name of the user.
  */
 socket.on('update-username', function( user ) {
     console.log('socket.on : update-username : ', user);
+    lobby().find('.username').text( username );
     all_client_update_username(user);
 });
 
