@@ -4,25 +4,6 @@
 //
 ///////////////////////////////////////////////////
 
-
-function register_event_handler() {
-    entrance().find('form').submit(on_form_submit_username);
-    lobby().find('.form.update-username form').submit(on_form_submit_username);
-    lobby().find('.form.create-room form').submit(on_form_submit_create_room);
-    lobby().find('.chat form').submit(on_form_submit_chat);
-    lobby().updateusername().click(showFormUserName);
-    lobby().createroom().click(showFormRoomName);
-    lobby().logout().click(doLogout);
-    $('.room-leave').click( on_click_leave_room );
-    $('body').on('click', '.roomname', on_click_join_room );
-    room().find('.chat form').submit(on_form_submit_chat);
-}
-
-
-
-
-
-
 /**
  *
  * @param event
@@ -48,6 +29,7 @@ function on_form_submit_create_room(event) {
     $(this).find('[name="roomname"]').val('');
     formRoomName().hide();//hide form
 }
+
 
 
 function on_form_submit_chat(event) {

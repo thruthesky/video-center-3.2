@@ -20,6 +20,7 @@ $(function(){
         server_login( username, function() {
 
             // @todo remember room name and enter.
+            // @attention it has bug now.
             if ( roomname && roomname!='Lobby') {
                 showRoom({username: username, name: roomname});
             }

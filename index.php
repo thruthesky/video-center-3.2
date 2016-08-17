@@ -51,8 +51,8 @@ $socket_server_url = 'http://localhost:9001/';
 
 
     <script src="js/init.js"></script>
-    <script src="js/dom-navigator.js"></script>
-    <script src="js/dom-event-handler.js"></script>
+    <script src="js/dom-handler.js"></script>
+    <script src="js/event-handler.js"></script>
     <script src="js/markup.js"></script>
     <script src="js/lobby.js"></script>
     <script src="js/action.js"></script>

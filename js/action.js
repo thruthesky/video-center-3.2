@@ -5,81 +5,18 @@
 //
 /////////////////////////////////////////////////////////////
 
-/**
- *
- * jQuery Extensions
- *
- */
-(function($){
-    $.fn.getUserList = function () {
-        return server_user_list(i_got_user_list, this);
-    };
-    $.fn.getRoomList = function () {
-        return sever_room_list( i_got_room_list, this );
-    };
-    $.fn.isActive = function () {
-        return this.css('display') != 'none';
-    };
-    $.fn.addRoom = function (user) {
-        $('#room-list').append( markup.roomName(user) );
-    };
-    $.fn.appendUser = function(user) {
-        var $userList;
-        if ( this.hasClass('user-list') ) $userList = this;
-        else $userList = this.find('.user-list');
-        var $user = $userList.find('[socket="'+user.socket_id+'"]');
-        if ( $user.length ) $user.remove();
-        $userList.append( markup.userName(user) );
-    };
-    $.fn.appendRoom = function(room) {
-        var $roomList;
-        if ( this.hasClass('room-list') ) $roomList = this;
-        else $roomList = this.find('.room-list');
-        var $room = $roomList.find('[id="'+room.roomname+'"]');
-        if ( $room.length ) $room.remove();
-        $roomList.append( markup.roomName(room.roomname) );
-    };
-    $.fn.emptyRoomList = function () {
-        return $('#room-list').empty();        
-    };
-    //emptying the user-list on logout
-    $.fn.emptyUserList = function () {
-        return $('#user-list').empty();        
-    };
-    //emptying the chat room message
-    $.fn.emptyRoomMessage = function () {
-        return $('#display').empty();        
-    };
-    $.fn.emptyLobbyMessage = function () {
-        return $('#lobbyDisplay').empty();        
-    };
-}(jQuery));
-
-
-var showFormUserName = function() {
-    formRoomName().hide();
-    formUserName().show();
-};
-
-var showFormRoomName = function() {
-    formUserName().hide();
-    formRoomName().show();    
-};
 
 /**
  * @todo user must be logged out from the server and update to all client.
  */
 var doLogout = function() {
-    display().emptyLobbyMessage();
-    server_logout();//for the server
-    delete_username();//for lockr
-    showEntrance();
 
-    /*
-     showLobby( function() {
-     console.log('after show lobby');
-     })
-     */
+    server_logout(function() {
+        delete_username(); // for lockr
+        display().emptyLobbyMessage();
+        showEntrance();
+    } );//for the server
+
 };
 
 
@@ -92,7 +29,7 @@ var doLogout = function() {
 var enterRoom = showRoom = function(o) {
     console.log("Enter Roomname: "+o.roomname);
     roomname=o.roomname;
-    save_roomname(roomname)
+    save_roomname(roomname);
     entrance().hide();
     lobby()
         .hide()
@@ -135,16 +72,11 @@ var enterLobby = function(callback) {
 
 var i_entered_lobby = showLobby = function(callback) {
     console.log('I enter with username:'+username);
-
-    entrance().hide();
-    room().hide();
-    formUserName().hide(); // hide it and show it when the user clicks.
-    formRoomName().hide(); // hide it and show it when the user clicks.
-    lobby().show();
+    show_lobby();
     lobby()
         .getUserList()
         .getRoomList()
-        .find('.username').text( username );
+        .updateUsername( username );
     if ( typeof callback == 'function' ) callback();
 };
 
@@ -278,7 +210,6 @@ function all_client_update_roomlist(room) {
 function all_client_update_username(user) {
     //For updating the username in lobby
     update_user_on_user_list(user);
-    lobby().find('.username').text( username );
 }
 
 /*
