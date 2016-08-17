@@ -37,7 +37,7 @@ function on_form_submit_username(event) {
             if ( entrance().isActive() ) enterLobby();
     });
     $form.find('[name="username"]').val('');
-    formUserName().hide();
+    formUserName().hide();//hide form
 }
 
 function on_form_submit_create_room(event) {
@@ -46,7 +46,7 @@ function on_form_submit_create_room(event) {
     console.log('on_form_submit_create_room');
     server_create_room(roomnameform, enterRoom);
     $(this).find('[name="roomname"]').val('');
-    formRoomName().hide();
+    formRoomName().hide();//hide form
 }
 
 

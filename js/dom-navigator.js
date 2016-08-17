@@ -59,3 +59,8 @@ var activeUserList = function() {
     return {};
 };
 
+var activeRoomList = function() {
+    if ( activePanel() ) return activePanel().find('.room-list');
+    return {};
+};
+

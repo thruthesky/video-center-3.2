@@ -31,8 +31,20 @@
         if ( $user.length ) $user.remove();
         $userList.append( markup.userName(user) );
     };
+    $.fn.appendRoom = function(room) {
+        var $roomList;
+        if ( this.hasClass('room-list') ) $roomList = this;
+        else $roomList = this.find('.room-list');
+        var $room = $roomList.find('[id="'+room.roomname+'"]');
+        if ( $room.length ) $room.remove();
+        $roomList.append( markup.roomName(room.roomname) );
+    };
     $.fn.emptyRoomList = function () {
         return $('#room-list').empty();        
+    };
+    //emptying the user-list on logout
+    $.fn.emptyUserList = function () {
+        return $('#user-list').empty();        
     };
     //emptying the chat room message
     $.fn.emptyRoomMessage = function () {
@@ -82,7 +94,11 @@ var enterRoom = showRoom = function(o) {
     roomname=o.roomname;
     save_roomname(roomname)
     entrance().hide();
-    lobby().hide();
+    lobby()
+        .hide()
+        .emptyRoomList()
+        .emptyUserList();//Added to avoid duplication of userlist
+        
     room().show();
     room().find('.roomname').text(o.roomname);
     //every time you join a room change the roomname 
@@ -91,6 +107,7 @@ var enterRoom = showRoom = function(o) {
 var showEntrance = function() {
     lobby()        
         .hide()
+        .emptyUserList()//Added to avoid duplication of userlist
         .emptyRoomList();//Added to avoid duplication of roomlist
     room().hide();
     entrance()
@@ -156,6 +173,7 @@ var i_left_room = function(callback) {
     room().hide();
 
     lobby()
+        .getRoomList()
         .getUserList()
         .show();
     lobby()
@@ -184,8 +202,7 @@ var i_got_message = function( data ) {
 
 
 function i_got_user_list(users, $this) {
-    for( var i in users ) {
-        console.log('My user'+users[i]);
+    for( var i in users ) {        
         if ( ! users.hasOwnProperty(i) ) continue;
         var user = users[i];
         $this.appendUser( user );
@@ -208,10 +225,22 @@ function i_got_room_list(rooms, $this) {
 
 
 var all_client_remove_user = function(socket) {
-    activePanel().find('.user-list [socket="'+socket+'"]').remove();
+    activePanel().find('.user-list [socket="'+socket+'"]').remove();   
+};
+var all_client_remove_room = function(roomid) {
+    activePanel().find('.room-list [id="'+roomid+'"]').remove();   
 };
 
 
+function update_room_on_room_list( room ) {
+    console.log('update_room_on_room_list', room);
+    if ( activeRoomList().length ) {
+        var $room = activeRoomList().find('[id="'+room.roomname+'"]');
+        if ( $room.length ) $room.text(room.roomname);
+        else activeRoomList().appendRoom( room );
+    }
+
+}
 
 // function updateUserOnUserList(user) {
 function update_user_on_user_list( user ) {
@@ -239,8 +268,11 @@ function update_user_on_user_list( user ) {
 
 
 
-function all_client_add_room(room) {
-    lobby().addRoom( room ); // add room on lobby no matter where you are.
+/* 
+* New implementation for updating the roomlist
+*/
+function all_client_update_roomlist(room) {    
+    update_room_on_room_list(room);    
 }
 
 function all_client_update_username(user) {
@@ -255,3 +287,8 @@ function all_client_update_username(user) {
  showRoom(room);
  };
  */
+
+
+// function all_client_add_room(room) {
+//     lobby().addRoom( room ); // add room on lobby no matter where you are.
+// }

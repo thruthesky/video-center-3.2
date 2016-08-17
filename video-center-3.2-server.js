@@ -97,11 +97,13 @@ vc.listen = function(socket, _io) {
     socket.on('create-room', function(roomname, callback){
         vc.createRoom(socket, roomname, callback);
     });
-    socket.on('join-room', function(roomname, callback){
+    socket.on('join-room', function(roomname, callback){        
         vc.joinRoom(socket, roomname, callback);
+       
     });
     socket.on('leave-room', function(roomname, callback){
         vc.joinRoom(socket, roomname, callback);
+        vc.leftRoom(socket);
     });
 
     socket.on('log-out', function(callback){
@@ -244,14 +246,24 @@ vc.createRoom = function ( socket, roomname, callback ) {
 
 vc.joinRoom = function( socket, roomname, callback ) {
     var user = me( socket );
-    socket.leave( user.roomname );
+    user.oldroom = user.roomname;
+    socket.leave( user.oldroom );
     socket.join( roomname );
     user.roomname = roomname;
     trace( user.username + ' joined :' + roomname);
     if ( typeof callback == 'function' ) callback( user );
     vc.io.sockets.emit('join-room', {user: user } );
 };
-
+vc.leftRoom = function(socket) {
+    var user = me( socket );   
+    var roomname = user.oldroom;
+    var roomExist = vc.isRoomExist(roomname);
+    console.log("Roomname:"+roomname);
+    console.log("Does room exist:"+roomExist);//1 for not exist and 2 for exist
+    if(roomExist==1){
+        vc.io.sockets.emit('remove-room', roomname );
+    }
+}
 
 
 var forceDisconnect = function( socket, callback ) {
