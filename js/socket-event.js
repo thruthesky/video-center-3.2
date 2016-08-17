@@ -108,6 +108,13 @@ socket.on('log-out', function( socket ) {
     all_client_remove_user(socket);
 });
 /* 
+* New implementation for removing non existing roomname
+*/
+socket.on('remove-room', function( roomid ) {
+    console.log('Roomname remove:'+roomid);
+    all_client_remove_room(roomid);
+});
+/* 
 * New implementation for updating the roomlist
 */
 socket.on('create-room', function( room ) {

@@ -227,6 +227,9 @@ function i_got_room_list(rooms, $this) {
 var all_client_remove_user = function(socket) {
     activePanel().find('.user-list [socket="'+socket+'"]').remove();   
 };
+var all_client_remove_room = function(roomid) {
+    activePanel().find('.room-list [id="'+roomid+'"]').remove();   
+};
 
 
 function update_room_on_room_list( room ) {
