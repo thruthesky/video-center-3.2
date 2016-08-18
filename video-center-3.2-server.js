@@ -89,11 +89,25 @@ vc.listen = function(socket, _io) {
 
     // join lobby
     socket.on('join-lobby', function(callback) {
+        var user = me( socket );
+        user.roomname = "Lobby";
         socket.join('Lobby');
         callback();
     });
-
-
+    //Return to room if room exist
+    socket.on('return-room', function(roomname, callback){   
+        //for checking the old roomname in joinRoom function
+        var user = me( socket );
+        user.roomname = "Lobby";
+        socket.join('Lobby');     
+        vc.joinRoom(socket, roomname, callback);
+       
+    });
+    //Check if room still exist in the server
+    socket.on('check-room', function(roomname, callback){           
+        vc.checkRoom(roomname, callback);              
+    });
+   
     //Create Room
     socket.on('create-room', function(roomname, callback){
         vc.createRoom(socket, roomname, callback);
@@ -237,6 +251,7 @@ vc.logoutUser = function (id) {
 
 };
 
+
 vc.createRoom = function ( socket, roomname, callback ) {
     var user = me( socket );
     socket.leave(user.roomname);
@@ -273,22 +288,39 @@ vc.leftRoom = function(socket) {
         vc.io.sockets.emit('remove-room', roomname );
     }
 };
-
+vc.checkRoom = function(roomname, callback) {
+    var re = vc.getRoomList ( {room: roomname} );//check if room exist     
+        var result;                 
+        if(re.length==0) {//if length is 0 the room does not exist
+            callback(0);
+        }
+        else {//if length is greater than 0 check if room still exist      
+            for(var i in re) {
+                result=re[i];                        
+                callback( result );    
+            }   
+        } 
+};
 
 
 var forceDisconnect = function( socket, callback ) {
-    var user = me( socket );
-    if ( user.roomname ) {
-        socket.leave( user.roomname );
+    try{
+        var user = me( socket );
+        if ( typeof user.roomname !== 'undefined' ) {
+            socket.leave( user.roomname );
+            if(user.roomname!="Lobby"){
+            user.oldroom = user.roomname;
+            vc.leftRoom(socket);
+            }
+        }
+        vc.removeUser( socket.id );      
+        if ( typeof callback == 'function' ) callback();
+        vc.io.sockets.emit('disconnect', socket.id);
     }
-    vc.removeUser( socket.id );
-
-    //socket.leave(socket.room);
-    // socket.disconnect();
-
-
-    if ( typeof callback == 'function' ) callback();
-    vc.io.sockets.emit('disconnect', socket.id);
+    catch (e) {
+        socket.emit('error', 'forceDisconnect() CAUSE : ' + getErrorMessage(e));
+    }
+    
 };
 
 var forceLogout = function( socket, callback ) {

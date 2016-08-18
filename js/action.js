@@ -33,7 +33,7 @@ var enterRoom = showRoom = function(o) {
     entrance().hide();
     lobby()
         .hide()
-        .emptyRoomList()
+        .emptyRoomList()//Added to avoid duplication of roomlist
         .emptyUserList();//Added to avoid duplication of userlist
         
     room().show();
@@ -63,15 +63,13 @@ var showEntrance = function() {
  *
  * @param callback
  */
-var enterLobby = function(callback) {
-    console.log('Fresh enter');
+var enterLobby = function(callback) {   
     roomname = 'Lobby';
     save_roomname( roomname );
     server_enter_lobby( i_entered_lobby );
 };
 
-var i_entered_lobby = showLobby = function(callback) {
-    console.log('I enter with username:'+username);
+var i_entered_lobby = showLobby = function(callback) {    
     show_lobby();
     lobby()
         .getUserList()
@@ -103,7 +101,8 @@ var i_left_room = function(callback) {
     display().emptyRoomMessage();
     entrance().hide();
     room().hide();
-
+    formUserName().hide();
+    formRoomName().hide();
     lobby()
         .getRoomList()
         .getUserList()
@@ -175,8 +174,7 @@ function update_room_on_room_list( room ) {
 }
 
 // function updateUserOnUserList(user) {
-function update_user_on_user_list( user ) {
-    console.log('update_user_on_user_list', user);
+function update_user_on_user_list( user ) {    
     if ( activeUserList().length ) {
         var $user = activeUserList().find('[socket="'+user.socket+'"]');
         if ( $user.length ) $user.text(user.username);
@@ -197,8 +195,30 @@ function update_user_on_user_list( user ) {
 //
 //
 ///////////////////////////////////////////////////////////
+/* 
+* New implementation for checking if room exist
+*/
+// function check_room_exist(room) {
+//     alert(room);
+//     if(room==0){
+//         enterLobby();
+//     }else{
+//         enterLobby();
+//     }
+// }
 
 
+function check_room_exist(rooms) {  
+        console.log("check_room_exist: "+rooms);
+        //if the result callback is equals to roomname the room exist
+        if(rooms!="Lobby" && rooms==roomname) {
+            // alert('Room Exist');
+            server_return_room(roomname, showRoom);
+        }
+        else{
+             enterLobby();
+        }     
+}
 
 /* 
 * New implementation for updating the roomlist
