@@ -11,6 +11,7 @@
 var extend = require('./RTCMultiConnection/node_modules/extend');
 var util = require('./RTCMultiConnection/node_modules/util');
 var vc = {};
+var lobbyRoomname = 'Lobby';
 exports = module.exports = vc;
 /**
  *
@@ -116,9 +117,10 @@ vc.listen = function(socket, _io) {
         vc.joinRoom(socket, roomname, callback);
        
     });
-    socket.on('leave-room', function(roomname, callback){
-        vc.joinRoom(socket, roomname, callback); // error. 'leave-room' must do only 'leave room', not join room.
-        vc.leftRoom(socket);
+    socket.on('leave-room', function(callback){
+        vc.leaveRoom( socket );
+        vc.joinRoom( socket, lobbyRoomname ); // error. 'leave-room' must do only 'leave room', not join room. fix this.
+        callback();
     });
 
     socket.on('log-out', function(callback){
@@ -185,6 +187,10 @@ vc.addUser = function (socket, username) {
     vc.user[ socket.id ] = user;
 };
 
+
+vc.getUser = function( socket ) {
+    return vc.user[ socket.id ];
+};
 
 
 
@@ -270,7 +276,7 @@ vc.createRoom = function ( socket, roomname, callback ) {
 vc.joinRoom = function( socket, roomname, callback ) {
     var user = me( socket );
     user.oldroom = user.roomname; // fix. no need to have user.oldroom.
-    socket.leave( user.oldroom );
+
     socket.join( roomname );
     user.roomname = roomname;
     trace( user.username + ' joined :' + roomname);
@@ -278,15 +284,31 @@ vc.joinRoom = function( socket, roomname, callback ) {
     vc.io.sockets.emit('join-room', {user: user } );
 };
 
-vc.leftRoom = function(socket) {
-    var user = me( socket );   
-    var roomname = user.oldroom;
-    var roomExist = vc.isRoomExist(roomname);
-    console.log("Roomname:"+roomname);
-    console.log("Does room exist:"+roomExist);//1 for not exist and 2 for exist
-    if(roomExist==1){
-        vc.io.sockets.emit('remove-room', roomname );
+vc.leaveRoom = function(socket) {
+    var user = me( socket );
+    socket.leave( user.roomname );
+    if ( vc.isRoomExist( user.roomname ) ) {
+        // room exist..
+
+        console.log("room exists. don't broadcast for room delete");
     }
+    else if ( vc.getRoomUsers( user.roomname ) ) {
+        // room exists...
+        console.log("user exists. don't broadcast for room delete");
+    }
+    else {
+        vc.io.sockets.emit('remove-room', user.roomname );
+    }
+
+    //
+
+    //var roomname = user.oldroom;
+    //var roomExist = vc.isRoomExist(roomname);
+    //console.log("Roomname:"+roomname);
+    //console.log("Does room exist:"+roomExist);//1 for not exist and 2 for exist
+    //if(roomExist==1){
+        //vc.io.sockets.emit('remove-room', roomname );
+    //}
 };
 vc.checkRoom = function(roomname, callback) {
     var re = vc.getRoomList ( {room: roomname} );//check if room exist     
@@ -310,7 +332,7 @@ var forceDisconnect = function( socket, callback ) {
             socket.leave( user.roomname );
             if(user.roomname!="Lobby"){
             user.oldroom = user.roomname;
-            vc.leftRoom(socket);
+            vc.leaveRoom(socket);
             }
         }
         vc.removeUser( socket.id );      
@@ -350,14 +372,31 @@ vc.getRoomList = function ( o ) {
     var rooms = vc.io.sockets.manager.rooms;
 
     var roomList = [];
+    var room;
+    var re;
     for ( var roomname in rooms ) {
         if ( ! rooms.hasOwnProperty( roomname ) ) continue;
         if ( roomname == '' ) continue;
         roomname = roomname.replace( /^\//, '' );
-        roomList.push( roomname );
+
+        re = false;
+        if ( o.user ) {
+            re = {
+                roomname: roomname,
+                users: vc.getRoomUsers( roomname )
+            }
+        }
+        else {
+            if ( o.room == false ) re = roomname;
+            else if ( o.room == roomname ) re = roomname;
+        }
+
+        if ( re ) roomList.push( re );
+
     }
     return roomList;
 };
+
 
 //noinspection JSUndefinedPropertyAssignment
 vc.isRoomExist = function( name ) {
@@ -365,6 +404,37 @@ vc.isRoomExist = function( name ) {
     return re.length;
 };
 
+vc.getRoom = function( roomname ) {
+    var rooms = vc.io.sockets.manager.rooms;
+    return rooms[roomname];
+};
+
+
+/**
+ *
+ *
+ * @param roomname
+ *
+ * @use when you need user information of a room.
+ * @use when you need to check if the room is empty or not.
+ *
+ * @todo add test on getRoomList, on check if room is empty.
+ */
+vc.getRoomUsers = function ( roomname ) {
+    if ( vc.isRoomExist( roomname ) ) {
+        room = vc.getRoom( roomname );
+        if ( room ) {
+            var users = [];
+            for ( var socket_id in room ) {
+                if ( ! room.hasOwnProperty( socket_id ) ) continue;
+                var socket = room[ socket_id ]; /// is it really a socket?
+                users.push( vc.getUser( socket ) );
+            }
+            return users;
+        }
+    }
+    return 0;
+};
 
 
 function getErrorMessage(e) {

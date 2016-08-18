@@ -54,8 +54,9 @@ function on_click_join_room() {
 
 
 
-function on_click_leave_room() {    
-    server_leave_room( i_left_room );   
+function on_click_leave_room() {
+    server_leave_room( i_left_room );
 }
+
 
 

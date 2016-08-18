@@ -49,9 +49,8 @@ function server_create_room(roomname, callback) {
 }
 
 function server_leave_room(callback) {
-     socket.emit('leave-room','Lobby', function(room) {
-        /*$('.roomname').remove();*/
-        i_left_room();
+     socket.emit('leave-room', function( ) {
+         callback();
     });
 }
 

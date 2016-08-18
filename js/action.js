@@ -79,38 +79,33 @@ var i_entered_lobby = showLobby = function(callback) {
 };
 
 
-/*
-var i_return_session = function(username) {
-    //To fix the find undefined
-    lobby().show();
-    server_update_username({
-        'username' : username,
-        'callback' : function(username) {
-            console.log('name updated');
-            if ( entrance().isActive() ) enterLobby();
-        }
-    });
-};
-*/
+
+var i_left_room = function() {
+
+    i_entered_lobby();
+
+    //roomname='Lobby';
+    //save_roomname(roomname);
+    //console.log('Roomname: '+roomname);
+
+    //display().emptyRoomMessage();
+    //entrance().hide();
+    //room().hide();
+    //formUserName().hide();
+    //formRoomName().hide();
+    //lobby()
+        //.getRoomList()
+        //.getUserList()
+        //.show();
+    //lobby()
+        //.find('.username').text( username );
 
 
-var i_left_room = function(callback) {
-    roomname='Lobby';
-    save_roomname(roomname);
-    console.log('Roomname: '+roomname);
-    display().emptyRoomMessage();
-    entrance().hide();
-    room().hide();
-    formUserName().hide();
-    formRoomName().hide();
-    lobby()
-        .getRoomList()
-        .getUserList()
-        .show();
-    lobby()
-        .find('.username').text( username );
-    if ( typeof callback == 'function' ) callback();
+    // if ( typeof callback == 'function' ) callback();
 };
+
+
+
 
 var i_got_message = function( data ) {
     

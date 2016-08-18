@@ -3,6 +3,19 @@ Video Center Version 3.2 is the next version of video-center-3.
 Video Center inherits the idea and the structure of Video Center 3 and it adds lacking functions of it.
 
 
+
+# Re-factoring on Aug 18, 2016
+
+* No more SPA.
+
+    * entrance.html
+    * lobby.html
+    * room.html
+    
+
+
+
+
 # TODO
 
 * show users list under room name in lobby. and update it real time.

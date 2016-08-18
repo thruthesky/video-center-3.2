@@ -17,3 +17,6 @@ var const_roomname = 'roomname_key'; // + (new Date).getTime();
 var roomname = get_roomname();//
 
 var dom_handler = {};
+var lobbyRoomname = 'Lobby';
+
+var socket_server_url = 'http://localhost:9001/';
