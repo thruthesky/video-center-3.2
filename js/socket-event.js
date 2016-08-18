@@ -39,8 +39,9 @@ function server_check_room(roomname, callback) {
 function server_join_room(room_id, callback) {
     socket.emit('join-room',room_id, callback);
 }
-
-
+function server_return_room(room_id, callback) {
+    socket.emit('return-room',room_id, callback);
+}
 function server_create_room(roomname, callback) {
     socket.emit( 'create-room', roomname, function( room ) {
         callback( room );

@@ -33,7 +33,7 @@ var enterRoom = showRoom = function(o) {
     entrance().hide();
     lobby()
         .hide()
-        .emptyRoomList()
+        .emptyRoomList()//Added to avoid duplication of roomlist
         .emptyUserList();//Added to avoid duplication of userlist
         
     room().show();
@@ -101,7 +101,8 @@ var i_left_room = function(callback) {
     display().emptyRoomMessage();
     entrance().hide();
     room().hide();
-
+    formUserName().hide();
+    formRoomName().hide();
     lobby()
         .getRoomList()
         .getUserList()
@@ -205,17 +206,20 @@ function update_user_on_user_list( user ) {
 //         enterLobby();
 //     }
 // }
+
+
 function check_room_exist(rooms) {  
         console.log("check_room_exist: "+rooms);
+        //if the result callback is equals to roomname the room exist
         if(rooms!="Lobby" && rooms==roomname) {
-            alert('Room Exist');
-             enterLobby();
+            // alert('Room Exist');
+            server_return_room(roomname, showRoom);
         }
         else{
-            enterLobby();
-        }
-     
+             enterLobby();
+        }     
 }
+
 /* 
 * New implementation for updating the roomlist
 */

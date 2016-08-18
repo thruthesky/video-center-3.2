@@ -17,14 +17,12 @@ $(function(){
         //i_return_session(username);
 
         // async
-        server_login( username, function() {
-
+        server_login( username, function() {            
             // @todo remember room name and enter.
             // @attention it has bug now.
             if ( roomname && roomname!='Lobby') {                
                 //Check if room still exist in the server                 
-                server_check_room(roomname, check_room_exist);
-                // showRoom({username: username, name: roomname});
+                server_check_room(roomname, check_room_exist);               
             }
             else {
                 enterLobby();
