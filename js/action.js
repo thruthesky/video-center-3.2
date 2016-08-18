@@ -69,6 +69,9 @@ var enterLobby = function(callback) {
     server_enter_lobby( i_entered_lobby );
 };
 
+
+// @deprecated
+//
 var i_entered_lobby = showLobby = function(callback) {    
     show_lobby();
     lobby()

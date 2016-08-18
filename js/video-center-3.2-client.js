@@ -5,12 +5,20 @@
  *
  */
 /// Script begins.
+
+
+
+/**
+ *
+ * @deprecated since we do not use spa.
+ *
+ *
 $(function(){
-    /*save_roomname('Lobby'); testing only*/
+    // save_roomname('Lobby'); testing only
     register_event_handler();
 
     if ( username ) {
-        /*Added need to fix*/
+        // Added need to fix
         console.log("Username:"+username);  
         console.log("Roomname:"+roomname);
 
@@ -40,3 +48,4 @@ $(function(){
 });
 
 
+*/

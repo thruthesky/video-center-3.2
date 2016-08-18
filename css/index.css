@@ -2,10 +2,7 @@
   color: black; }
 
 #entrance {
-  display: none; }
-
-#lobby {
-  display: none; }
+  background-color: blue; }
 
 #room {
   display: none; }

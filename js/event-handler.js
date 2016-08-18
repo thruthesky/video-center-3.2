@@ -6,6 +6,7 @@
 
 /**
  *
+ * @deprecated
  * @param event
  */
 function on_form_submit_username(event) {

@@ -1,7 +1,7 @@
 {
 "version": 3,
-"mappings": "AAAA,gCAAiC;EAC/B,KAAK,EAAE,KAAK;;ACDd,SAAU;EACR,OAAO,EAAE,IAAI;;ACDf,MAAO;EACL,OAAO,EAAE,IAAI;;ACDf,KAAM;EACJ,OAAO,EAAE,IAAI;;ACOf,UAAW;EACT,OAAO,EAAE,IAAI;EACb,gBAAgB,EAAE,OAAO;;AAI3B,IAAK;EACH,gBAAgB,EAAE,KAAK;EAErB,kBAAM;IACJ,KAAK,EAAE,IAAI;IACX,SAAS,EAAE,GAAG;;AAKpB,wBAAuB;EACnB,OAAO,EAAE,IAAI",
-"sources": ["scss/_menu.scss","scss/_entrance.scss","scss/_lobby.scss","scss/_room.scss","index.scss"],
+"mappings": "AAAA,gCAAiC;EAC/B,KAAK,EAAE,KAAK;;ACDd,SAAU;EACR,gBAAgB,EAAE,IAAI;;ACDxB,KAAM;EACJ,OAAO,EAAE,IAAI;;ACOf,UAAW;EACT,OAAO,EAAE,IAAI;EACb,gBAAgB,EAAE,OAAO;;AAI3B,IAAK;EACH,gBAAgB,EAAE,KAAK;EAErB,kBAAM;IACJ,KAAK,EAAE,IAAI;IACX,SAAS,EAAE,GAAG;;AAKpB,wBAAuB;EACnB,OAAO,EAAE,IAAI",
+"sources": ["scss/_menu.scss","scss/_entrance.scss","scss/_room.scss","index.scss"],
 "names": [],
 "file": "index.css"
 }

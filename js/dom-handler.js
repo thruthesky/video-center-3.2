@@ -135,6 +135,7 @@ var activeRoomList = function() {
 
 
 function register_event_handler() {
+    /*
     entrance().find('form').submit(on_form_submit_username);
     lobby().find('.form.update-username form').submit(on_form_submit_username);
     lobby().find('.form.create-room form').submit(on_form_submit_create_room);
@@ -145,6 +146,7 @@ function register_event_handler() {
     $('.room-leave').click( on_click_leave_room );
     $('body').on('click', '.roomname', on_click_join_room );
     room().find('.chat form').submit(on_form_submit_chat);
+    */
 }
 
 
